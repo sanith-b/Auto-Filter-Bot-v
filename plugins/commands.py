@@ -898,7 +898,7 @@ async def reset_group_command(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
         return
     grp_id = message.chat.id
     if not await is_check_admin(client, grp_id, message.from_user.id):
