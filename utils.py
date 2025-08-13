@@ -319,7 +319,7 @@ def extract_tag(file_name: str) -> str:
     if season_match:
         season = int(season_match.group(1))
         return f"S{season:02d} •"
-    quality_match = re.search(r'\b(2160p|1080p|720p|480p|360p|4k)\b', file_name)
+    quality_match = re.search(r'\b(2160p|1080p|720p|480p|540p|4k)\b', file_name)
     if quality_match:
         return f"{quality_match.group(1)} •"
     return ""
@@ -328,7 +328,7 @@ def extract_request_content(message_text):
     match = re.search(r"<u>(.*?)</u>", message_text)
     if match:
         return match.group(1).strip()
-    match = re.search(r"📝 ʀᴇǫᴜᴇꜱᴛ ?: ?(.*?)(?:\n|$)", message_text)
+    match = re.search(r"📩 Request ?: ?(.*?)(?:\n|$)", message_text)
     if match:
         return match.group(1).strip()
     return message_text.strip()
@@ -679,11 +679,11 @@ async def get_cap(settings, remaining_seconds, files, query, total_results, sear
                 for file_num, file in enumerate(files, start=offset+1):
                     cap += f"\n\n<b>{file_num}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'>{get_size(file.file_size)}| {clean_filename(file.file_name)}</a></b>"
             else:
-                cap =f"<b>📂 ʜᴇʀᴇ ɪ ꜰᴏᴜɴᴅ ꜰᴏʀ ʏᴏᴜʀ sᴇᴀʀᴄʜ <code>{search}</code></b>\n\n"
+                cap =f"<b>🔍 Here it is <code>{search}</code></b>\n\n"
                 for file_num, file in enumerate(files, start=offset+1):
                     cap += f"<b>{file_num}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'>{get_size(file.file_size)}| {clean_filename(file.file_name)}\n\n</a></b>"
     else:
-        cap =f"<b>📂 ʜᴇʀᴇ ɪ ꜰᴏᴜɴᴅ ꜰᴏʀ ʏᴏᴜʀ sᴇᴀʀᴄʜ <code>{search}</code></b>\n\n"
+        cap =f"<b>🔍 Here it is:- <code>{search}</code></b>\n\n"
         for file_num, file in enumerate(files, start=offset+1):
             cap += f"<b>{file_num}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'>{get_size(file.file_size)}| {clean_filename(file.file_name)}\n\n</a></b>"
     return cap
@@ -691,22 +691,22 @@ async def get_cap(settings, remaining_seconds, files, query, total_results, sear
 async def group_setting_buttons(grp_id):
     settings = await get_settings(grp_id)
     buttons = [[
-                InlineKeyboardButton('ʀᴇꜱᴜʟᴛ ᴘᴀɢᴇ', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
-                InlineKeyboardButton('ʙᴜᴛᴛᴏɴ' if settings.get("button") else 'ᴛᴇxᴛ', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
+                InlineKeyboardButton('📄 Result Page', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
+                InlineKeyboardButton('⏺️ Button' if settings.get("button") else '💬 Text ', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
             ],[
-                InlineKeyboardButton('ꜰɪʟᴇ ꜱᴇᴄᴜʀᴇ', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',),
-                InlineKeyboardButton('ᴇɴᴀʙʟᴇ' if settings["file_secure"] else 'ᴅɪꜱᴀʙʟᴇ', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',),
+                InlineKeyboardButton('📁 File Secure', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',),
+                InlineKeyboardButton('✅ Enable' if settings["file_secure"] else '❌ Disable', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',),
             ],[
-                InlineKeyboardButton('ɪᴍᴅʙ ᴘᴏꜱᴛᴇʀ', callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',),
-                InlineKeyboardButton('ᴇɴᴀʙʟᴇ' if settings["imdb"] else 'ᴅɪꜱᴀʙʟᴇ', callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',),
+                InlineKeyboardButton('🎭 IMDB Poster', callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',),
+                InlineKeyboardButton('✅ Enable' if settings["imdb"] else '❌ Disable', callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',),
             ],[
-                InlineKeyboardButton('ᴡᴇʟᴄᴏᴍᴇ ᴍꜱɢ', callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',),
-                InlineKeyboardButton('ᴇɴᴀʙʟᴇ' if settings["welcome"] else 'ᴅɪꜱᴀʙʟᴇ', callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',),
+                InlineKeyboardButton('💌 Welcome MSG', callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',),
+                InlineKeyboardButton('✅ Enable' if settings["welcome"] else '❌ Disable', callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',),
             ],[
-                InlineKeyboardButton('ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{grp_id}',),
-                InlineKeyboardButton('ᴇɴᴀʙʟᴇ' if settings["auto_delete"] else 'ᴅɪꜱᴀʙʟᴇ', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{grp_id}',),
+                InlineKeyboardButton('🗑️ Auto Delete', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{grp_id}',),
+                InlineKeyboardButton('✅ Enable' if settings["auto_delete"] else '❌ Disable', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{grp_id}',),
             ],[
-                InlineKeyboardButton('ᴍᴀx ʙᴜᴛᴛᴏɴꜱ', callback_data=f'setgs#max_btn#{settings["max_btn"]}#{grp_id}',),
+                InlineKeyboardButton('🔘 Max Button', callback_data=f'setgs#max_btn#{settings["max_btn"]}#{grp_id}',),
                 InlineKeyboardButton('10' if settings["max_btn"] else f'{MAX_B_TN}', callback_data=f'setgs#max_btn#{settings["max_btn"]}#{grp_id}',),
             ],[
                 InlineKeyboardButton('ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ᴍᴏᴅᴇ', callback_data=f'verification_setgs#{grp_id}',),
