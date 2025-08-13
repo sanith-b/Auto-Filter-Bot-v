@@ -587,7 +587,7 @@ async def requests(bot, message):
                         InlineKeyboardButton('👀 View Request', url=f"{message.reply_to_message.link}"),
                         InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
                       ]]
-                    reported_post = await bot.send_message(chat_id=admin, text=text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                    reported_post = await bot.send_message(chat_id=admin, text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                     success = True
             else:
                 if len(content) < 3:
