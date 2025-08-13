@@ -34,7 +34,7 @@ async def start(client, message):
             pass
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
         return
     m = message
     if len(m.command) == 2 and m.command[1].startswith(('notcopy', 'sendall')):
@@ -120,7 +120,7 @@ async def start(client, message):
             await message.reply_text("Invalid refer!")
             return
         if user_id == message.from_user.id:
-            await message.reply_text("Hᴇʏ Dᴜᴅᴇ, Yᴏᴜ Cᴀɴ'ᴛ Rᴇғᴇʀ Yᴏᴜʀsᴇʟғ 🤣!\n\nsʜᴀʀᴇ ʟɪɴᴋ ʏᴏᴜʀ ғʀɪᴇɴᴅ ᴀɴᴅ ɢᴇᴛ 10 ʀᴇғᴇʀʀᴀʟ ᴘᴏɪɴᴛ ɪғ ʏᴏᴜ ᴀʀᴇ ᴄᴏʟʟᴇᴄᴛɪɴɢ 100 ʀᴇғᴇʀʀᴀʟ ᴘᴏɪɴᴛs ᴛʜᴇɴ ʏᴏᴜ ᴄᴀɴ ɢᴇᴛ 1 ᴍᴏɴᴛʜ ғʀᴇᴇ ᴘʀᴇᴍɪᴜᴍ ᴍᴇᴍʙᴇʀsʜɪᴘ.")
+            await message.reply_text("🤣 Hey Dude! You can’t refer yourself!")
             return
         if referdb.is_user_in_list(message.from_user.id):
             await message.reply_text("Yᴏᴜ ʜᴀᴠᴇ ʙᴇᴇɴ ᴀʟʀᴇᴀᴅʏ ɪɴᴠɪᴛᴇᴅ ❗")
@@ -133,8 +133,8 @@ async def start(client, message):
         fromuse = referdb.get_refer_points(user_id) + 10
         if fromuse == 100:
             referdb.add_refer_points(user_id, 0) 
-            await message.reply_text(f"🎉 𝗖𝗼𝗻𝗴𝗿𝗮𝘁𝘂𝗹𝗮𝘁𝗶𝗼𝗻𝘀! 𝗬𝗼𝘂 𝘄𝗼𝗻 𝟭𝟬 𝗥𝗲𝗳𝗲𝗿𝗿𝗮𝗹 𝗽𝗼𝗶𝗻𝘁 𝗯𝗲𝗰𝗮𝘂𝘀𝗲 𝗬𝗼𝘂 𝗵𝗮𝘃𝗲 𝗯𝗲𝗲𝗻 𝗦𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆 𝗜𝗻𝘃𝗶𝘁𝗲𝗱 ☞ {uss.mention}!")		    
-            await message.reply_text(user_id, f"You have been successfully invited by {message.from_user.mention}!") 	
+            await message.reply_text(f"🎉 Congrats! \n\n👥 Friend Invited Successfully.. {uss.mention}!")		    
+            await message.reply_text(user_id, f"🎉 You Were Invited By {message.from_user.mention}!") 	
             seconds = 2592000
             if seconds > 0:
                 expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
@@ -148,7 +148,7 @@ async def start(client, message):
                 await client.send_message(chat_id=admin, text=f"Sᴜᴄᴄᴇss ғᴜʟʟʏ ᴛᴀsᴋ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ʙʏ ᴛʜɪs ᴜsᴇʀ:\n\nuser Nᴀᴍᴇ: {uss.mention}\n\nUsᴇʀ ɪᴅ: {uss.id}!")	
         else:
             referdb.add_refer_points(user_id, fromuse)
-            await message.reply_text(f"You have been successfully invited by {uss.mention}!")
+            await message.reply_text(f"🎉 You Were Invited By {uss.mention}!")
             await client.send_message(user_id, f"𝗖𝗼𝗻𝗴𝗿𝗮𝘁𝘂𝗹𝗮𝘁𝗶𝗼𝗻𝘀! 𝗬𝗼𝘂 𝘄𝗼𝗻 𝟭𝟬 𝗥𝗲𝗳𝗲𝗿𝗿𝗮𝗹 𝗽𝗼𝗶𝗻𝘁 𝗯𝗲𝗰𝗮𝘂𝘀𝗲 𝗬𝗼𝘂 𝗵𝗮𝘃𝗲 𝗯𝗲𝗲𝗻 𝗦𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆 𝗜𝗻𝘃𝗶𝘁𝗲𝗱 ☞{message.from_user.mention}!")
         return
         
@@ -294,7 +294,8 @@ async def start(client, message):
                 ]
             else:
                 btn = [
-                    [InlineKeyboardButton('𝖴𝗉𝖽𝖺𝗍𝖾 𝖢𝗁𝖺𝗇𝗇𝖾𝗅', url=UPDATE_CHANNEL_LNK)]
+            [InlineKeyboardButton('🎁 Support Us', callback_data="premium")],
+            [InlineKeyboardButton('⚡ Update Channel', url=UPDATE_CHANNEL_LNK)]
                 ]
             msg = await client.send_cached_media(
                 chat_id=message.from_user.id,
@@ -308,7 +309,7 @@ async def start(client, message):
         await asyncio.sleep(DELETE_TIME)
         for x in filesarr:
             await x.delete()
-        await k.edit_text("<b>ʏᴏᴜʀ ᴀʟʟ ᴠɪᴅᴇᴏꜱ/ꜰɪʟᴇꜱ ᴀʀᴇ ᴅᴇʟᴇᴛᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ !\nᴋɪɴᴅʟʏ ꜱᴇᴀʀᴄʜ ᴀɢᴀɪɴ</b>")
+        await k.edit_text("✨ File Deleted!</b>")
         return
 
     user = message.from_user.id
@@ -325,7 +326,8 @@ async def start(client, message):
                 ]
             else:
                 btn = [
-                    [InlineKeyboardButton('𝖴𝗉𝖽𝖺𝗍𝖾 𝖢𝗁𝖺𝗇𝗇𝖾𝗅', url=UPDATE_CHANNEL_LNK)]
+            [InlineKeyboardButton('🎁 Support Us', callback_data="premium")],
+            [InlineKeyboardButton('⚡ Update Channel', url=UPDATE_CHANNEL_LNK)]
                 ]
             msg = await client.send_cached_media(
                 chat_id=message.from_user.id,
@@ -346,10 +348,10 @@ async def start(client, message):
                 except:
                     return
             await msg.edit_caption(f_caption)
-            k = await msg.reply(f"<b>♻️ ᴛʜɪꜱ ꜰɪʟᴇ ᴡɪʟʟ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀꜰᴛᴇʀ {get_time(DELETE_TIME)}</b>", quote=True)
+            k = await msg.reply(f"<b>⚡ Auto-Deleting File After {get_time(DELETE_TIME)}</b>", quote=True)
             await asyncio.sleep(DELETE_TIME)
             await msg.delete()
-            await k.edit_text("<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!</b>")
+            await k.edit_text("✨ File Deleted!</b>")
             return
         except:
             pass
@@ -377,7 +379,8 @@ async def start(client, message):
         ]
     else:
         btn = [
-            [InlineKeyboardButton('𝖴𝗉𝖽𝖺𝗍𝖾 𝖢𝗁𝖺𝗇𝗇𝖾𝗅', url=UPDATE_CHANNEL_LNK)]
+            [InlineKeyboardButton('🎁 Support Us', callback_data="premium")],
+            [InlineKeyboardButton('⚡ Update Channel', url=UPDATE_CHANNEL_LNK)]
         ]
     msg = await client.send_cached_media(
         chat_id=message.from_user.id,
@@ -386,10 +389,10 @@ async def start(client, message):
         protect_content=settings.get('file_secure', PROTECT_CONTENT),
         reply_markup=InlineKeyboardMarkup(btn)
     )
-    k = await msg.reply(f"<b>♻️ ᴛʜɪꜱ ꜰɪʟᴇ ᴡɪʟʟ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀꜰᴛᴇʀ {get_time(DELETE_TIME)}</b>", quote=True)     
+    k = await msg.reply(f"<b>⚡ Auto-Deleting File After {get_time(DELETE_TIME)}</b>", quote=True)     
     await asyncio.sleep(DELETE_TIME)
     await msg.delete()
-    await k.edit_text("<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!</b>")
+    await k.edit_text("<b>✨ File Deleted!</b>")
     return
 
 @Client.on_message(filters.command('logs') & filters.user(ADMINS))
@@ -482,15 +485,15 @@ async def delete_all_index_confirm(bot, message):
     await Media.collection.drop()
     if MULTIPLE_DB:    
         await Media2.collection.drop()
-    await message.answer("Eᴠᴇʀʏᴛʜɪɴɢ's Gᴏɴᴇ")
-    await message.message.edit('ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ᴀʟʟ ɪɴᴅᴇxᴇᴅ ꜰɪʟᴇꜱ ✅')
+    await message.answer("🗑️ Everything’s Gone")
+    await message.message.edit('🗑️ All Indexed Files Deleted')
 
 @Client.on_message(filters.command('settings'))
 async def settings(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
         return
     user_id = message.from_user.id if message.from_user else None
     if not user_id:
@@ -499,15 +502,15 @@ async def settings(client, message):
     if chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         grp_id = message.chat.id
         if not await is_check_admin(client, grp_id, message.from_user.id):
-            return await message.reply_text('<b>ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ɪɴ ᴛʜɪꜱ ɢʀᴏᴜᴘ</b>')
+            return await message.reply_text('<b>🚫 You’re Not an Admin!</b>')
         await db.connect_group(grp_id, user_id)
         btn = [[
-                InlineKeyboardButton("👤 ᴏᴘᴇɴ ɪɴ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ 👤", callback_data=f"opnsetpm#{grp_id}")
+                InlineKeyboardButton("👤 Open in Private Chat", callback_data=f"opnsetpm#{grp_id}")
               ],[
-                InlineKeyboardButton("👥 ᴏᴘᴇɴ ʜᴇʀᴇ 👥", callback_data=f"opnsetgrp#{grp_id}")
+                InlineKeyboardButton("👥 Open Here", callback_data=f"opnsetgrp#{grp_id}")
               ]]
         await message.reply_text(
-                text="<b>ᴡʜᴇʀᴇ ᴅᴏ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴏᴘᴇɴ ꜱᴇᴛᴛɪɴɢꜱ ᴍᴇɴᴜ ? ⚙️</b>",
+                text="<b>🛠️ Open Settings Here or There?</b>",
                 reply_markup=InlineKeyboardMarkup(btn),
                 disable_web_page_preview=True,
                 parse_mode=enums.ParseMode.HTML,
@@ -535,7 +538,7 @@ async def connect_group(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
         return
     user_id = message.from_user.id
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
@@ -561,7 +564,7 @@ async def requests(bot, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
         return
     if REQST_CHANNEL is None or SUPPORT_CHAT_ID is None: return # Must add REQST_CHANNEL and SUPPORT_CHAT_ID to use this feature
     if message.reply_to_message and SUPPORT_CHAT_ID == message.chat.id:
@@ -573,22 +576,22 @@ async def requests(bot, message):
         try:
             if REQST_CHANNEL is not None:
                 btn = [[
-                        InlineKeyboardButton('ᴠɪᴇᴡ ʀᴇǫᴜᴇꜱᴛ', url=f"{message.reply_to_message.link}"),
-                        InlineKeyboardButton('ꜱʜᴏᴡ ᴏᴘᴛɪᴏɴꜱ', callback_data=f'show_option#{reporter}')
+                        InlineKeyboardButton('👀 View Request', url=f"{message.reply_to_message.link}"),
+                        InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
                       ]]
-                reported_post = await bot.send_message(chat_id=REQST_CHANNEL, text=f"<b>📝 ʀᴇǫᴜᴇꜱᴛ : <u>{content}</u>\n\n📚 ʀᴇᴘᴏʀᴛᴇᴅ ʙʏ : {mention}\n📖 ʀᴇᴘᴏʀᴛᴇʀ ɪᴅ : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                reported_post = await bot.send_message(chat_id=REQST_CHANNEL, text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                 success = True
             elif len(content) >= 3:
                 for admin in ADMINS:
                     btn = [[
-                        InlineKeyboardButton('ᴠɪᴇᴡ ʀᴇǫᴜᴇꜱᴛ', url=f"{message.reply_to_message.link}"),
-                        InlineKeyboardButton('ꜱʜᴏᴡ ᴏᴘᴛɪᴏɴꜱ', callback_data=f'show_option#{reporter}')
+                        InlineKeyboardButton('👀 View Request', url=f"{message.reply_to_message.link}"),
+                        InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
                       ]]
-                    reported_post = await bot.send_message(chat_id=admin, text=f"<b>📝 ʀᴇǫᴜᴇꜱᴛ : <u>{content}</u>\n\n📚 ʀᴇᴘᴏʀᴛᴇᴅ ʙʏ : {mention}\n📖 ʀᴇᴘᴏʀᴛᴇʀ ɪᴅ : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                    reported_post = await bot.send_message(chat_id=admin, text=text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                     success = True
             else:
                 if len(content) < 3:
-                    await message.reply_text("<b>ʏᴏᴜ ᴍᴜꜱᴛ ᴛʏᴘᴇ ᴀʙᴏᴜᴛ ʏᴏᴜʀ ʀᴇǫᴜᴇꜱᴛ [ᴍɪɴɪᴍᴜᴍ 3 ᴄʜᴀʀᴀᴄᴛᴇʀꜱ]. ʀᴇǫᴜᴇꜱᴛꜱ ᴄᴀɴ'ᴛ ʙᴇ ᴇᴍᴘᴛʏ.</b>")
+                    await message.reply_text("⚠️ Please Type Your Request (Min 3 Characters).</b>")
             if len(content) < 3:
                 success = False
         except Exception as e:
@@ -608,22 +611,22 @@ async def requests(bot, message):
         try:
             if REQST_CHANNEL is not None and len(content) >= 3:
                 btn = [[
-                        InlineKeyboardButton('ᴠɪᴇᴡ ʀᴇǫᴜᴇꜱᴛ', url=f"{message.link}"),
-                        InlineKeyboardButton('ꜱʜᴏᴡ ᴏᴘᴛɪᴏɴꜱ', callback_data=f'show_option#{reporter}')
+                        InlineKeyboardButton('👀 View Request', url=f"{message.link}"),
+                        InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
                       ]]
-                reported_post = await bot.send_message(chat_id=REQST_CHANNEL, text=f"<b>📝 ʀᴇǫᴜᴇꜱᴛ : <u>{content}</u>\n\n📚 ʀᴇᴘᴏʀᴛᴇᴅ ʙʏ : {mention}\n📖 ʀᴇᴘᴏʀᴛᴇʀ ɪᴅ : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                reported_post = await bot.send_message(chat_id=REQST_CHANNEL, text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                 success = True
             elif len(content) >= 3:
                 for admin in ADMINS:
                     btn = [[
-                        InlineKeyboardButton('ᴠɪᴇᴡ ʀᴇǫᴜᴇꜱᴛ', url=f"{message.link}"),
-                        InlineKeyboardButton('ꜱʜᴏᴡ ᴏᴘᴛɪᴏɴꜱ', callback_data=f'show_option#{reporter}')
+                        InlineKeyboardButton('👀 View Request', url=f"{message.link}"),
+                        InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
                       ]]
-                    reported_post = await bot.send_message(chat_id=admin, text=f"<b>📝 ʀᴇǫᴜᴇꜱᴛ : <u>{content}</u>\n\n📚 ʀᴇᴘᴏʀᴛᴇᴅ ʙʏ : {mention}\n📖 ʀᴇᴘᴏʀᴛᴇʀ ɪᴅ : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                    reported_post = await bot.send_message(chat_id=admin, text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                     success = True
             else:
                 if len(content) < 3:
-                    await message.reply_text("<b>ʏᴏᴜ ᴍᴜꜱᴛ ᴛʏᴘᴇ ᴀʙᴏᴜᴛ ʏᴏᴜʀ ʀᴇǫᴜᴇꜱᴛ [ᴍɪɴɪᴍᴜᴍ 3 ᴄʜᴀʀᴀᴄᴛᴇʀꜱ]. ʀᴇǫᴜᴇꜱᴛꜱ ᴄᴀɴ'ᴛ ʙᴇ ᴇᴍᴘᴛʏ.</b>")
+                    await message.reply_text("⚠️ Please Type Your Request (Min 3 Characters).</b>")
             if len(content) < 3:
                 success = False
         except Exception as e:
@@ -643,22 +646,22 @@ async def requests(bot, message):
         try:
             if REQST_CHANNEL is not None and len(content) >= 3:
                 btn = [[
-                        InlineKeyboardButton('ᴠɪᴇᴡ ʀᴇǫᴜᴇꜱᴛ', url=f"{message.link}"),
-                        InlineKeyboardButton('ꜱʜᴏᴡ ᴏᴘᴛɪᴏɴꜱ', callback_data=f'show_option#{reporter}')
+                        InlineKeyboardButton('👀 View Request', url=f"{message.link}"),
+                        InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
                       ]]
-                reported_post = await bot.send_message(chat_id=REQST_CHANNEL, text=f"<b>📝 ʀᴇǫᴜᴇꜱᴛ : <u>{content}</u>\n\n📚 ʀᴇᴘᴏʀᴛᴇᴅ ʙʏ : {mention}\n📖 ʀᴇᴘᴏʀᴛᴇʀ ɪᴅ : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                reported_post = await bot.send_message(chat_id=REQST_CHANNEL, text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                 success = True
             elif len(content) >= 3:
                 for admin in ADMINS:
                     btn = [[
-                        InlineKeyboardButton('ᴠɪᴇᴡ ʀᴇǫᴜᴇꜱᴛ', url=f"{message.link}"),
-                        InlineKeyboardButton('ꜱʜᴏᴡ ᴏᴘᴛɪᴏɴꜱ', callback_data=f'show_option#{reporter}')
+                        InlineKeyboardButton('👀 View Request', url=f"{message.link}"),
+                        InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
                       ]]
-                    reported_post = await bot.send_message(chat_id=admin, text=f"<b>📝 ʀᴇǫᴜᴇꜱᴛ : <u>{content}</u>\n\n📚 ʀᴇᴘᴏʀᴛᴇᴅ ʙʏ : {mention}\n📖 ʀᴇᴘᴏʀᴛᴇʀ ɪᴅ : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                    reported_post = await bot.send_message(chat_id=admin, text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                     success = True
             else:
                 if len(content) < 3:
-                    await message.reply_text("<b>ʏᴏᴜ ᴍᴜꜱᴛ ᴛʏᴘᴇ ᴀʙᴏᴜᴛ ʏᴏᴜʀ ʀᴇǫᴜᴇꜱᴛ [ᴍɪɴɪᴍᴜᴍ 3 ᴄʜᴀʀᴀᴄᴛᴇʀꜱ]. ʀᴇǫᴜᴇꜱᴛꜱ ᴄᴀɴ'ᴛ ʙᴇ ᴇᴍᴘᴛʏ.</b>")
+                    await message.reply_text("<b>⚠️ Please Type Your Request (Min 3 Characters).</b>")
             if len(content) < 3:
                 success = False
         except Exception as e:
@@ -669,10 +672,10 @@ async def requests(bot, message):
     if success:
         link = await bot.create_chat_invite_link(int(REQST_CHANNEL))
         btn = [[
-                InlineKeyboardButton('ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ', url=link.invite_link),
-                InlineKeyboardButton('ᴠɪᴇᴡ ʀᴇǫᴜᴇꜱᴛ', url=f"{reported_post.link}")
+                InlineKeyboardButton('🔗 Join Channel', url=link.invite_link),
+                InlineKeyboardButton('👀 View Request', url=f"{reported_post.link}")
               ]]
-        await message.reply_text("<b>ʏᴏᴜʀ ʀᴇǫᴜᴇꜱᴛ ʜᴀꜱ ʙᴇᴇɴ ᴀᴅᴅᴇᴅ! ᴘʟᴇᴀꜱᴇ ᴡᴀɪᴛ ꜰᴏʀ ꜱᴏᴍᴇ ᴛɪᴍᴇ.\n\nᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ ꜰɪʀꜱᴛ & ᴠɪᴇᴡ ʀᴇǫᴜᴇꜱᴛ.</b>", reply_markup=InlineKeyboardMarkup(btn))
+        await message.reply_text("<b>✅ Your Request Has Been Added! \n\n⏳ Please wait a moment…</b>", reply_markup=InlineKeyboardMarkup(btn))
     
 @Client.on_message(filters.command("send") & filters.user(ADMINS))
 async def send_msg(bot, message):
@@ -748,7 +751,7 @@ async def topsearch_callback(client, callback_query):
         resize_keyboard=True, 
         placeholder="Most searches of the day"
     )
-    await callback_query.message.reply_text("<b>Tᴏᴘ Sᴇᴀʀᴄʜᴇs Oғ Tʜᴇ Dᴀʏ 👇</b>", reply_markup=reply_markup)
+    await callback_query.message.reply_text("<b>📊 Trending Searches</b>", reply_markup=reply_markup)
     await callback_query.answer()
 
 @Client.on_message(filters.command('top_search'))
@@ -756,7 +759,7 @@ async def top(_, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
         return
     def is_alphanumeric(string):
         return bool(re.match('^[a-zA-Z0-9 ]*$', string))
@@ -779,7 +782,7 @@ async def top(_, message):
         row = truncated_messages[i:i+2]
         keyboard.append(row)
     reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True, placeholder="Most searches of the day")
-    await message.reply_text(f"<b>Tᴏᴘ Sᴇᴀʀᴄʜᴇs Oғ Tʜᴇ Dᴀʏ 👇</b>", reply_markup=reply_markup)
+    await message.reply_text(f"<b>📊 Trending Searches</b>", reply_markup=reply_markup)
 
     
 @Client.on_message(filters.command('trendlist'))
@@ -787,7 +790,7 @@ async def trendlist(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
         return
     def is_alphanumeric(string):
         return bool(re.match('^[a-zA-Z0-9 ]*$', string))
@@ -816,9 +819,9 @@ async def trendlist(client, message):
         await message.reply_text("No valid top messages found.")
         return  
     formatted_list = "\n".join([f"{i+1}. <b>{msg}</b>" for i, msg in enumerate(truncated_messages)])
-    additional_message = "⚡️ 𝑨𝒍𝒍 𝒕𝒉𝒆 𝒓𝒆𝒔𝒖𝒍𝒕𝒔 𝒂𝒃𝒐𝒗𝒆 𝒄𝒐𝒎𝒆 𝒇𝒓𝒐𝒎 𝒘𝒉𝒂𝒕 𝒖𝒔𝒆𝒓𝒔 𝒉𝒂𝒗𝒆 𝒔𝒆𝒂𝒓𝒄𝒉𝒆𝒅 𝒇𝒐𝒓. 𝑻𝒉𝒆𝒚'𝒓𝒆 𝒔𝒉𝒐𝒘𝒏 𝒕𝒐 𝒚𝒐𝒖 𝒆𝒙𝒂𝒄𝒕𝒍𝒚 𝒂𝒔 𝒕𝒉𝒆𝒚 𝒘𝒆𝒓𝒆 𝒔𝒆𝒂𝒓𝒄𝒉𝒆𝒅, 𝒘𝒊𝒕𝒉𝒐𝒖𝒕 𝒂𝒏𝒚 𝒄𝒉𝒂𝒏𝒈𝒆𝒔 𝒃𝒚 𝒕𝒉𝒆 𝒐𝒘𝒏𝒆𝒓."
+    additional_message = "🔍 No edits, no tweaks — exactly as searched!"
     formatted_list += f"\n\n{additional_message}"
-    reply_text = f"<b>Top {len(truncated_messages)} Tʀᴀɴᴅɪɴɢ ᴏғ ᴛʜᴇ ᴅᴀʏ 👇:</b>\n\n{formatted_list}"
+    reply_text = f"<b>Top {len(truncated_messages)} 🔥 Trending Today 👇:</b>\n\n{formatted_list}"
     await message.reply_text(reply_text)
 
 @Client.on_message(filters.private & filters.command("pm_search") & filters.user(ADMINS))
@@ -895,19 +898,19 @@ async def reset_group_command(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text(f🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
         return
     grp_id = message.chat.id
     if not await is_check_admin(client, grp_id, message.from_user.id):
-        return await message.reply_text('<b>ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ɪɴ ᴛʜɪꜱ ɢʀᴏᴜᴘ</b>')
-    sts = await message.reply("<b>♻️ ᴄʜᴇᴄᴋɪɴɢ...</b>")
+        return await message.reply_text('<b>🚫 You’re Not an Admin!</b>')
+    sts = await message.reply("<b>⏳ Checking…</b>")
     await asyncio.sleep(1.2)
     await sts.delete()
     chat_type = message.chat.type
     if chat_type not in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-        return await message.reply_text("<b>ᴜꜱᴇ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ ɪɴ ɢʀᴏᴜᴘ...</b>")
+        return await message.reply_text("<b>📌 Use This Command in Group…</b>")
     btn = [[
-        InlineKeyboardButton('🚫 ᴄʟᴏsᴇ 🚫', callback_data='close_data')
+        InlineKeyboardButton('❌ Close', callback_data='close_data')
     ]]
     reply_markup = InlineKeyboardMarkup(btn)
     await save_group_settings(grp_id, 'shortner', SHORTENER_WEBSITE)
@@ -926,61 +929,61 @@ async def reset_group_command(client, message):
     await save_group_settings(grp_id, 'log', LOG_VR_CHANNEL)
     await save_group_settings(grp_id, 'is_verify', IS_VERIFY)
     await save_group_settings(grp_id, 'fsub_id', AUTH_CHANNEL)
-    await message.reply_text('ꜱᴜᴄᴄᴇꜱꜱғᴜʟʟʏ ʀᴇꜱᴇᴛ ɢʀᴏᴜᴘ ꜱᴇᴛᴛɪɴɢꜱ...')
+    await message.reply_text('✅ Group Settings Successfully Reset!')
 
 @Client.on_message(filters.command('set_fsub'))
 async def set_fsub(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
         return
     chat_type = message.chat.type
     if chat_type not in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-        return await message.reply_text("<b>ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪɴ ɢʀᴏᴜᴘ...</b>")
+        return await message.reply_text("<b>📌 Use This Command in Group…</b>")
     grp_id = message.chat.id
     title = message.chat.title
     if not await is_check_admin(client, grp_id, message.from_user.id):
-        return await message.reply_text('<b>ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ɪɴ ᴛʜɪꜱ ɢʀᴏᴜᴘ</b>')
+        return await message.reply_text('<b>🚫 You’re Not an Admin!</b>')
     try:
         channel_id = int(message.text.split(" ", 1)[1])
     except IndexError:
-        return await message.reply_text("<b>ᴄᴏᴍᴍᴀɴᴅ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ\n\nꜱᴇɴᴅ ᴍᴇ ᴄʜᴀɴɴᴇʟ ɪᴅ ᴡɪᴛʜ ᴄᴏᴍᴍᴀɴᴅ, ʟɪᴋᴇ <code>/set_fsub -100******</code></b>")
+        return await message.reply_text("<b>⚠️ Command Incomplete!\n\n❌ Incomplete Command!\n🔗 Use: /set_fsub -100******</code></b>")
     except ValueError:
-        return await message.reply_text('<b>ᴍᴀᴋᴇ ꜱᴜʀᴇ ᴛʜᴇ ɪᴅ ɪꜱ ᴀɴ ɪɴᴛᴇɢᴇʀ.</b>')
+        return await message.reply_text('<b>ID Must Be an Integer</b>')
     try:
         chat = await client.get_chat(channel_id)
     except Exception as e:
-        return await message.reply_text(f"<b><code>{channel_id}</code> ɪꜱ ɪɴᴠᴀʟɪᴅ. ᴍᴀᴋᴇ ꜱᴜʀᴇ <a href=https://t.me/{temp.B_LINK} ʙᴏᴛ</a> ɪꜱ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ\n\n<code>{e}</code></b>")
+        return await message.reply_text(f"<b><code>{channel_id}</code>Invalid! Please Check <a href=https://t.me/{temp.B_LINK} BOT</a> Is Admin in That Channel\n\n<code>{e}</code></b>")
     if chat.type != enums.ChatType.CHANNEL:
-        return await message.reply_text(f"🫥 <code>{channel_id}</code> ᴛʜɪꜱ ɪꜱ ɴᴏᴛ ᴄʜᴀɴɴᴇʟ, ꜱᴇɴᴅ ᴍᴇ ᴏɴʟʏ ᴄʜᴀɴɴᴇʟ ɪᴅ ɴᴏᴛ ɢʀᴏᴜᴘ ɪᴅ</b>")
+        return await message.reply_text(f"🫥 <code>{channel_id}</code>  Not a Channel! Send Channel ID Only</b>")
     await save_group_settings(grp_id, 'fsub_id', [channel_id])
     mention = message.from_user.mention
-    await client.send_message(LOG_API_CHANNEL, f"#Fsub_Channel_set\n\nᴜꜱᴇʀ - {mention} ꜱᴇᴛ ᴛʜᴇ ꜰᴏʀᴄᴇ ᴄʜᴀɴɴᴇʟ ꜰᴏʀ {title}:\n\nꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ - {chat.title}\nɪᴅ - `{channel_id}`")
-    await message.reply_text(f"<b>ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ꜰᴏʀᴄᴇ ꜱᴜʙꜱᴄʀɪʙᴇ ᴄʜᴀɴɴᴇʟ ꜰᴏʀ {title}\n\nᴄʜᴀɴɴᴇʟ ɴᴀᴍᴇ - {chat.title}\nɪᴅ - <code>{channel_id}</code></b>")
+    await client.send_message(LOG_API_CHANNEL, f"#Fsub_Channel_set\n\nUser - {mention} Set The Force Channel For {title}:\n\nFSUB Channel Name - {chat.title}\nChannel ID - `{channel_id}`")
+    await message.reply_text(f"<b>🎯 Successfully Set Force Sub Channel for {title}\n\n📌 Channel Name - {chat.title}\nɪ📌 Channel ID - <code>{channel_id}</code></b>")
 
 @Client.on_message(filters.command('remove_fsub'))
 async def remove_fsub(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
         return
     chat_type = message.chat.type
     if chat_type not in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-        return await message.reply_text("<b>ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪɴ ɢʀᴏᴜᴘ...</b>")       
+        return await message.reply_text("<b>📌 Use This Command in Group…</b>")       
     grp_id = message.chat.id
     title = message.chat.title
     if not await is_check_admin(client, grp_id, message.from_user.id):
-        return await message.reply_text('<b>ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ɪɴ ᴛʜɪꜱ ɢʀᴏᴜᴘ</b>')
+        return await message.reply_text('<b>🚫 You’re Not an Admin!</b>')
     settings = await get_settings(grp_id)
     if (c in AUTH_CHANNEL for c in settings['fsub_id']):
-        await message.reply_text("<b>ᴄᴜʀʀᴇɴᴛʟʏ ɴᴏ ᴀɴʏ ғᴏʀᴄᴇ ꜱᴜʙ ᴄʜᴀɴɴᴇʟ.... <code>[ᴅᴇғᴀᴜʟᴛ ᴀᴄᴛɪᴠᴀᴛᴇ]</code></b>")
+        await message.reply_text("<b>⚠️ No Force Sub Channel Set... <code>[ᴅᴇғᴀᴜʟᴛ ᴀᴄᴛɪᴠᴀᴛᴇ]</code></b>")
     else:
         await save_group_settings(grp_id, 'fsub_id', AUTH_CHANNEL)
         mention = message.from_user.mention
-        await client.send_message(LOG_API_CHANNEL, f"#Remove_Fsub_Channel\n\nᴜꜱᴇʀ - {mention} ʀᴇᴍᴏᴠᴇ ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ ꜰʀᴏᴍ {title}")
-        await message.reply_text(f"<b>✅ ꜱᴜᴄᴄᴇꜱꜱғᴜʟʟʏ ʀᴇᴍᴏᴠᴇᴅ ꜰᴏʀᴄᴇ ꜱᴜʙ ᴄʜᴀɴɴᴇʟ.</b>")         
+        await client.send_message(LOG_API_CHANNEL, f"#Remove_Fsub_Channel\n\nUser - {mention} Remove FSUB Channel From {title}")
+        await message.reply_text(f"<b>🗑️ Force Sub Channel Removed.</b>")         
 
 
 @Client.on_message(filters.command('details'))
@@ -989,51 +992,27 @@ async def all_settings(client, message):
         bot_id = client.me.id
         maintenance_mode = await db.get_maintenance_status(bot_id)
         if maintenance_mode and message.from_user.id not in ADMINS:
-            await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+            await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
             return
         chat_type = message.chat.type
         if chat_type not in [ChatType.GROUP, ChatType.SUPERGROUP]:
-            return await message.reply_text("<b>ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪɴ ɢʀᴏᴜᴘ...</b>")
+            return await message.reply_text("<b>📌 Use This Command in Group…</b>")
         grp_id = message.chat.id
         title = message.chat.title
         
         if not await is_check_admin(client, grp_id, message.from_user.id):
-            return await message.reply_text('<b>ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ɪɴ ᴛʜɪꜱ ɢʀᴏᴜᴘ</b>') 
+            return await message.reply_text('<b>🚫 You’re Not an Admin!</b>') 
         
         settings = await get_settings(grp_id)
-        nbbotz = f"""<b>⚙️ ʏᴏᴜʀ sᴇᴛᴛɪɴɢs ꜰᴏʀ - {title}</b>
+        nbbotz = f"""<b>⚙️ Your Settings For - {title}</b>
 
-✅️ <b><u>1sᴛ ᴠᴇʀɪꜰʏ sʜᴏʀᴛɴᴇʀ</u></b>
-<b>ɴᴀᴍᴇ</b> - <code>{settings["shortner"]}</code>
-<b>ᴀᴘɪ</b> - <code>{settings["api"]}</code>
+📝 <b>Log Channel ID:</b> <code>{settings['log']}</code>
+🚫 <b>Fsub Channel ID:</b> <code>{settings['fsub_id']}</code>
 
-✅️ <b><u>2ɴᴅ ᴠᴇʀɪꜰʏ sʜᴏʀᴛɴᴇʀ</u></b>
-<b>ɴᴀᴍᴇ</b> - <code>{settings["shortner_two"]}</code>
-<b>ᴀᴘɪ</b> - <code>{settings["api_two"]}</code>
+🎯 <b>IMDb Template:</b> <code>{settings['template']}</code>
+📂 <b>File Caption:</b> <code>{settings['caption']}</code>
 
-✅️ <b><u>𝟹ʀᴅ ᴠᴇʀɪꜰʏ sʜᴏʀᴛɴᴇʀ</u></b>
-<b>ɴᴀᴍᴇ</b> - <code>{settings["shortner_three"]}</code>
-<b>ᴀᴘɪ</b> - <code>{settings["api_three"]}</code>
-
-⏰ <b>2ɴᴅ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ᴛɪᴍᴇ</b> - <code>{settings["verify_time"]}</code>
-
-⏰ <b>𝟹ʀᴅ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ᴛɪᴍᴇ</b> - <code>{settings['third_verify_time']}</code>
-
-1️⃣ <b>ᴛᴜᴛᴏʀɪᴀʟ ʟɪɴᴋ 1</b> - {settings['tutorial']}
-
-2️⃣ <b>ᴛᴜᴛᴏʀɪᴀʟ ʟɪɴᴋ 2</b> - {settings.get('tutorial_2', TUTORIAL_2)}
-
-3️⃣ <b>ᴛᴜᴛᴏʀɪᴀʟ ʟɪɴᴋ 3</b> - {settings.get('tutorial_3', TUTORIAL_3)}
-
-📝 <b>ʟᴏɢ ᴄʜᴀɴɴᴇʟ ɪᴅ</b> - <code>{settings['log']}</code>
-
-🚫 ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ ɪᴅ - `{settings['fsub_id']}`
-
-🎯 <b>ɪᴍᴅʙ ᴛᴇᴍᴘʟᴀᴛᴇ</b> - <code>{settings['template']}</code>
-
-📂 <b>ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ</b> - <code>{settings['caption']}</code>
-
-📌 <b><i>ɴᴏᴛᴇ :- ɪꜰ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ʀᴇꜱᴇᴛ ʏᴏᴜʀ ꜱᴇᴛᴛɪɴɢꜱ ᴊᴜꜱᴛ ꜱᴇɴᴅ <code>/reset_group</code> ᴄᴏᴍᴍᴀɴᴅ.</i></b>
+📌 <i>Note: To reset your settings, send <code>/reset_group</code>.</i>
 """        
         btn = [[            
             InlineKeyboardButton("ᴄʟᴏsᴇ", callback_data="close_data")
@@ -1051,7 +1030,7 @@ async def group_commands(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
         return
     user = message.from_user.mention
     user_id = message.from_user.id
@@ -1069,12 +1048,12 @@ async def siletxbotz_list_movies(client, message):
         bot_id = client.me.id
         maintenance_mode = await db.get_maintenance_status(bot_id)
         if maintenance_mode and message.from_user.id not in ADMINS:
-            await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+            await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
             return
         movies = await siletxbotz_get_movies()
         if not movies:
             return await message.reply("❌ No Recent Movies Found", parse_mode=ParseMode.HTML)       
-        msg = "<b>Latest Uploads List ✅</b>\n\n"
+        msg = "<b>🆕 Latest Uploads</b>\n\n"
         msg += "<b>🎬 Movies:</b>\n"
         msg += "\n".join(f"<b>{i+1}. {m}</b>" for i, m in enumerate(movies))
         await message.reply(msg[:4096], parse_mode=ParseMode.HTML)
@@ -1088,12 +1067,12 @@ async def siletxbotz_list_series(client, message):
         bot_id = client.me.id
         maintenance_mode = await db.get_maintenance_status(bot_id)
         if maintenance_mode and message.from_user.id not in ADMINS:
-            await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+            await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
             return
         series_data = await siletxbotz_get_series()
         if not series_data:
             return await message.reply("❌ No Recent Series Found", parse_mode=ParseMode.HTML)       
-        msg = "<b>Latest Uploades List ✅</b>\n\n"
+        msg = "<b>🆕 Latest Uploads</b>\n\n"
         msg += "<b>📺 Series:</b>\n"
         for i, (title, seasons) in enumerate(series_data.items(), 1):
             season_list = ", ".join(f"{s}" for s in seasons)
@@ -1109,9 +1088,9 @@ async def reset_all_settings(client, message):
     try:
         reset_count = await db.silentx_reset_settings()
         await message.reply(
-            f"<b>ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ꜱᴇᴛᴛɪɴɢꜱ ꜰᴏʀ {reset_count} ɢʀᴏᴜᴘꜱ. ᴅᴇꜰᴀᴜʟᴛ ᴠᴀʟᴜᴇꜱ ᴡɪʟʟ ʙᴇ ᴜꜱᴇᴅ ✅</b>",
+            f"<b>✅ Successfully Deleted Group Settings! {reset_count} , \n\n⚙️ Default Values Will Be Used.</b>",
             quote=True
         )
     except Exception as e:
         LOGGER.error(f"Error Processing Reset All Settings Command: {str(e)}")
-        await message.reply("<b>ᴇʀʀᴏʀ 🚫.oᴄᴄᴜʀʀᴇᴅ ᴡʜɪʟᴇ ᴅᴇʟᴇᴛɪɴɢ ɢʀᴏᴜᴘ ꜱᴇᴛᴛɪɴɢꜱ! ᴘʟᴇᴀꜱᴇ ᴛʀʏ ᴀɢᴀɪɴ ʟᴀᴛᴇʀ.</b>", quote=True)       
+        await message.reply("<b>🚫 Oops! Couldn’t Delete Settings. ⏳ Try Again Later.</b>", quote=True)       
