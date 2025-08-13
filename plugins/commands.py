@@ -294,7 +294,6 @@ async def start(client, message):
                 ]
             else:
                 btn = [
-            [InlineKeyboardButton('🎁 Support Us', callback_data="premium")],
             [InlineKeyboardButton('⚡ Update Channel', url=UPDATE_CHANNEL_LNK)]
                 ]
             msg = await client.send_cached_media(
@@ -326,7 +325,6 @@ async def start(client, message):
                 ]
             else:
                 btn = [
-            [InlineKeyboardButton('🎁 Support Us', callback_data="premium")],
             [InlineKeyboardButton('⚡ Update Channel', url=UPDATE_CHANNEL_LNK)]
                 ]
             msg = await client.send_cached_media(
@@ -379,7 +377,6 @@ async def start(client, message):
         ]
     else:
         btn = [
-            [InlineKeyboardButton('🎁 Support Us', callback_data="premium")],
             [InlineKeyboardButton('⚡ Update Channel', url=UPDATE_CHANNEL_LNK)]
         ]
     msg = await client.send_cached_media(
