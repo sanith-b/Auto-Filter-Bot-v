@@ -941,7 +941,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
                                          callback_data=f'setgs#max_btn#{settings["max_btn"]}#{str(grp_id)}'),
                     InlineKeyboardButton('10' if settings["max_btn"] else f'{MAX_B_TN}',
                                          callback_data=f'setgs#max_btn#{settings["max_btn"]}#{str(grp_id)}')
-    [
+				],
+				[
                     InlineKeyboardButton('📜 Log Channel', callback_data=f'log_setgs#{grp_id}',),		
                     InlineKeyboardButton('📝 Add Caption', callback_data=f'caption_setgs#{grp_id}',),
                 ],
