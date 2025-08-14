@@ -1620,7 +1620,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         settings = await get_settings(int(grp_id))
         current_caption = settings.get(f'caption', "No input detected, default used!")    
         await query.message.edit(f'<b>📌 Custom Caption Details\n\n🎨 Caption Here: <code>{current_caption}</code>.</b>')
-        m = await query.message.reply("<b>Send New Caption\n\nCaption Format:\nFile Name -<code>{file_name}</code>\nFile Caption - <code>{file_caption}</code>\n<code>File Size - {file_size}</code>\n\n ❌ /cancel to stop</b>") 
+        m = await query.message.reply("<b>Send New Caption\n\nCaption Format:\nFile Name -<code>{file_name}</code>\nFile Caption - <code>{file_caption}</code>\nFile Size - <code>{file_size}</code>\n\n ❌ /cancel to stop</b>") 
         caption_msg = await client.listen(chat_id=query.message.chat.id, user_id=user_id)
         if caption_msg.text == "/cancel":
             btn = [[
