@@ -34,7 +34,7 @@ async def start(client, message):
             pass
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🚧 Currently upgrading… Will return soon 🔜", disable_web_page_preview=True)
         return
     m = message
     if len(m.command) == 2 and m.command[1].startswith(('notcopy', 'sendall')):
@@ -44,7 +44,7 @@ async def start(client, message):
         settings = await get_settings(grp_id)         
         verify_id_info = await db.get_verify_id_info(user_id, verify_id)
         if not verify_id_info or verify_id_info["verified"]:
-            await message.reply("<b>ʟɪɴᴋ ᴇxᴘɪʀᴇᴅ ᴛʀʏ ᴀɢᴀɪɴ...</b>")
+            await message.reply("<b>❌ Oops! That link is gone. Try again 🔄</b>")
             return  
         ist_timezone = pytz.timezone('Asia/Kolkata')
         if await db.user_verified(user_id):
@@ -68,7 +68,7 @@ async def start(client, message):
             verifiedfiles = f"https://telegram.me/{temp.U_NAME}?start=file_{grp_id}_{file_id}"
         await client.send_message(settings['log'], script.VERIFIED_LOG_TEXT.format(m.from_user.mention, user_id, datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%d %B %Y'), num))
         btn = [[
-            InlineKeyboardButton("✅ ᴄʟɪᴄᴋ ʜᴇʀᴇ ᴛᴏ ɢᴇᴛ ꜰɪʟᴇ ✅", url=verifiedfiles),
+            InlineKeyboardButton("📂 ꜰɪʟᴇ ʀᴇᴀᴅʏ! • ᴛᴀᴘ ᴛᴏ ɢᴇᴛ ɪᴛ", url=verifiedfiles),
         ]]
         reply_markup=InlineKeyboardMarkup(btn)
         dlt=await m.reply_photo(
@@ -94,15 +94,15 @@ async def start(client, message):
         await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention))
     if len(message.command) != 2:
         buttons = [[
-                    InlineKeyboardButton('+ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ +', url=f'http://telegram.me/{temp.U_NAME}?startgroup=true')
+                    InlineKeyboardButton('🚀 Add Me Now!', url=f'http://telegram.me/{temp.U_NAME}?startgroup=true')
                 ],[
-                    InlineKeyboardButton('🧧 ᴛʀᴇɴᴅɪɴɢ', callback_data="topsearch"),
-                    InlineKeyboardButton('🎟️ ᴜᴘɢʀᴀᴅᴇ', callback_data="premium"),
+                    InlineKeyboardButton('🔥 Trending', callback_data="topsearch"),
+                    InlineKeyboardButton('💖 Support Us', callback_data="premium"),
+                ],[💖 Support Us
+                    InlineKeyboardButton('🆘 Help', callback_data='disclaimer'),
+                    InlineKeyboardButton('ℹ️ About', callback_data='me')
                 ],[
-                    InlineKeyboardButton('♻️ ᴅᴍᴄᴀ', callback_data='disclaimer'),
-                    InlineKeyboardButton('👤 ᴀʙᴏᴜᴛ', callback_data='me')
-                ],[
-                    InlineKeyboardButton('🚫 ᴇᴀʀɴ ᴍᴏɴᴇʏ ᴡɪᴛʜ ʙᴏᴛ 🚫', callback_data="earn")
+                    InlineKeyboardButton('📞 Contact Us', callback_data="earn")
                 ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply_photo(
@@ -133,7 +133,7 @@ async def start(client, message):
         fromuse = referdb.get_refer_points(user_id) + 10
         if fromuse == 100:
             referdb.add_refer_points(user_id, 0) 
-            await message.reply_text(f"🎉 Congrats! \n\n👥 Friend Invited Successfully.. {uss.mention}!")		    
+            await message.reply_text(f"👥 Friend Invited Successfully {uss.mention}!")		    
             await message.reply_text(user_id, f"🎉 You Were Invited By {message.from_user.mention}!") 	
             seconds = 2592000
             if seconds > 0:
@@ -145,11 +145,11 @@ async def start(client, message):
                 text=f"<b>Hᴇʏ {uss.mention}\n\nYᴏᴜ ɢᴏᴛ 1 ᴍᴏɴᴛʜ ᴘʀᴇᴍɪᴜᴍ sᴜʙsᴄʀɪᴘᴛɪᴏɴ ʙʏ ɪɴᴠɪᴛɪɴɢ 10 ᴜsᴇʀs ❗", disable_web_page_preview=True              
                 )
             for admin in ADMINS:
-                await client.send_message(chat_id=admin, text=f"Sᴜᴄᴄᴇss ғᴜʟʟʏ ᴛᴀsᴋ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ʙʏ ᴛʜɪs ᴜsᴇʀ:\n\nuser Nᴀᴍᴇ: {uss.mention}\n\nUsᴇʀ ɪᴅ: {uss.id}!")	
+                await client.send_message(chat_id=admin, text=f"successfully completed!\n\nUser Name: {uss.mention}\n\nUser ID: {uss.id}!")	
         else:
             referdb.add_refer_points(user_id, fromuse)
             await message.reply_text(f"🎉 You Were Invited By {uss.mention}!")
-            await client.send_message(user_id, f"𝗖𝗼𝗻𝗴𝗿𝗮𝘁𝘂𝗹𝗮𝘁𝗶𝗼𝗻𝘀! 𝗬𝗼𝘂 𝘄𝗼𝗻 𝟭𝟬 𝗥𝗲𝗳𝗲𝗿𝗿𝗮𝗹 𝗽𝗼𝗶𝗻𝘁 𝗯𝗲𝗰𝗮𝘂𝘀𝗲 𝗬𝗼𝘂 𝗵𝗮𝘃𝗲 𝗯𝗲𝗲𝗻 𝗦𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆 𝗜𝗻𝘃𝗶𝘁𝗲𝗱 ☞{message.from_user.mention}!")
+            await client.send_message(user_id, f"🎉 You Were Invited By ☞{message.from_user.mention}!")
         return
         
         
@@ -189,25 +189,25 @@ async def start(client, message):
                     try:
                         invite_link = await client.create_chat_invite_link(chnl, creates_join_request=True)
                     except ChatAdminRequired:
-                        LOGGER.error("Bot Ko AUTH_CHANNEL Per Admin Bana Bhai Pahile 🤧")
+                        LOGGER.error("First, make me an Admin in the AUTH_CHANNEL")
                         return
                     btn.append([
-                        InlineKeyboardButton(f"⛔️ {i}. {channel_name} ⛔️", url=invite_link.invite_link)
+                        InlineKeyboardButton(f"{i}. {channel_name}", url=invite_link.invite_link)
                     ])
                 elif chnl not in AUTH_REQ_CHANNEL and not await is_subscribed(client, message.from_user.id, chnl):
                     try:
                         invite_link = await client.create_chat_invite_link(chnl)
                     except ChatAdminRequired:
-                        LOGGER.error("Bot Ko AUTH_CHANNEL Per Admin Bana Bhai Pahile 🤧")
+                        LOGGER.error("First, make me an Admin in the AUTH_CHANNEL")
                         return
                     btn.append([
-                        InlineKeyboardButton(f"⛔️ {i}. {channel_name} ⛔️", url=invite_link.invite_link)
+                        InlineKeyboardButton(f"{i}. {channel_name}", url=invite_link.invite_link)
                     ])
                 i += 1
 
             if btn:
                 if message.command[1] != "subscribe":
-                    btn.append([InlineKeyboardButton("♻️ ᴛʀʏ ᴀɢᴀɪɴ ♻️", url=f"https://t.me/{temp.U_NAME}?start={message.command[1]}")])
+                    btn.append([InlineKeyboardButton("♻️ Retry!", url=f"https://t.me/{temp.U_NAME}?start={message.command[1]}")])
                 await client.send_photo(
                     chat_id=message.from_user.id,
                     photo=random.choice(FSUB_IMG),
@@ -268,7 +268,7 @@ async def start(client, message):
     if data.startswith("allfiles"):
         files = temp.GETALL.get(file_id)
         if not files:
-            return await message.reply('<b><i>ɴᴏ ꜱᴜᴄʜ ꜰɪʟᴇ ᴇxɪꜱᴛꜱ !</b></i>')
+            return await message.reply('<b><i>❌ No Such File Exists! </b></i>')
         filesarr = []
         for file in files:
             file_id = file.file_id
@@ -290,11 +290,11 @@ async def start(client, message):
             if STREAM_MODE:
                 btn = [
                     [InlineKeyboardButton('𝖦𝖾𝗇𝖾𝗋𝖺𝗍𝖾 𝖲𝗍𝗋𝖾𝗆𝗂𝗇𝗀 𝖫𝗂𝗇𝗄', callback_data=f'streamfile:{file_id}')],
-                    [InlineKeyboardButton('𝖴𝗉𝖽𝖺𝗍𝖾 𝖢𝗁𝖺𝗇𝗇𝖾𝗅', url=UPDATE_CHANNEL_LNK)]  
+                    [InlineKeyboardButton('𝖴𝗉𝖽𝖺𝗍𝖾 𝖢𝗁𝖺𝗇𝗇𝖾𝗅 📢', url=UPDATE_CHANNEL_LNK)]  
                 ]
             else:
                 btn = [
-            [InlineKeyboardButton('⚡ Update Channel', url=UPDATE_CHANNEL_LNK)]
+                    [InlineKeyboardButton('𝖴𝗉𝖽𝖺𝗍𝖾 𝖢𝗁𝖺𝗇𝗇𝖾𝗅 📢 📢', url=UPDATE_CHANNEL_LNK)]
                 ]
             msg = await client.send_cached_media(
                 chat_id=message.from_user.id,
@@ -304,11 +304,11 @@ async def start(client, message):
                 reply_markup=InlineKeyboardMarkup(btn)
             )
             filesarr.append(msg)
-        k = await client.send_message(chat_id=message.from_user.id, text=f"<b><u>❗️❗️❗️IMPORTANT❗️️❗️❗️</u></b>\n\nᴛʜɪꜱ ᴍᴏᴠɪᴇ ꜰɪʟᴇ/ᴠɪᴅᴇᴏ ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ <b><u><code>{get_time(DELETE_TIME)}</code></u> 🫥 <i></b>(ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪꜱꜱᴜᴇꜱ)</i>.\n\n<b><i>ᴘʟᴇᴀꜱᴇ ꜰᴏʀᴡᴀʀᴅ ᴛʜɪꜱ ꜰɪʟᴇ ᴛᴏ ꜱᴏᴍᴇᴡʜᴇʀᴇ ᴇʟꜱᴇ ᴀɴᴅ ꜱᴛᴀʀᴛ ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴛʜᴇʀᴇ</i></b>")
+        k = await client.send_message(chat_id=message.from_user.id, text=f"<b><u>⚠️ File disappears in ⏰ <code>{get_time(DELETE_TIME)}</code> \n📥 Forward to another chat to download!</i></b>")
         await asyncio.sleep(DELETE_TIME)
         for x in filesarr:
             await x.delete()
-        await k.edit_text("✨ File Deleted!</b>")
+        await k.edit_text("<b>✨ File Deleted!</b>")
         return
 
     user = message.from_user.id
@@ -320,12 +320,12 @@ async def start(client, message):
             if STREAM_MODE:
                 btn = [
                     [InlineKeyboardButton('𝖦𝖾𝗇𝖾𝗋𝖺𝗍𝖾 𝖲𝗍𝗋𝖾𝗆𝗂𝗇𝗀 𝖫𝗂𝗇𝗄', callback_data=f'streamfile:{file_id}')],
-                    [InlineKeyboardButton('𝖴𝗉𝖽𝖺𝗍𝖾 𝖢𝗁𝖺𝗇𝗇𝖾𝗅', url=UPDATE_CHANNEL_LNK)]
+                    [InlineKeyboardButton('𝖴𝗉𝖽𝖺𝗍𝖾 𝖢𝗁𝖺𝗇𝗇𝖾𝗅 📢', url=UPDATE_CHANNEL_LNK)]
              
                 ]
             else:
                 btn = [
-            [InlineKeyboardButton('⚡ Update Channel', url=UPDATE_CHANNEL_LNK)]
+                    [InlineKeyboardButton('𝖴𝗉𝖽𝖺𝗍𝖾 𝖢𝗁𝖺𝗇𝗇𝖾𝗅 📢', url=UPDATE_CHANNEL_LNK)]
                 ]
             msg = await client.send_cached_media(
                 chat_id=message.from_user.id,
@@ -346,14 +346,14 @@ async def start(client, message):
                 except:
                     return
             await msg.edit_caption(f_caption)
-            k = await msg.reply(f"<b>⚡ Auto-Deleting File After {get_time(DELETE_TIME)}</b>", quote=True)
+            k = await msg.reply(f"<b>⚠️ File disappears in ⏰ <code>{get_time(DELETE_TIME)}</code> \n📥 Forward to another chat to download!</b>", quote=True)
             await asyncio.sleep(DELETE_TIME)
             await msg.delete()
-            await k.edit_text("✨ File Deleted!</b>")
+            await k.edit_text("<b>✨ File Deleted!</b>")
             return
         except:
             pass
-        return await message.reply('ɴᴏ ꜱᴜᴄʜ ꜰɪʟᴇ ᴇxɪꜱᴛꜱ !')
+        return await message.reply('❌ No Such File Exists! ')
     
     files = files_[0]
     title = clean_filename(files.file_name)
@@ -373,11 +373,11 @@ async def start(client, message):
     if STREAM_MODE:
         btn = [
             [InlineKeyboardButton('𝖦𝖾𝗇𝖾𝗋𝖺𝗍𝖾 𝖲𝗍𝗋𝖾𝗆𝗂𝗇𝗀 𝖫𝗂𝗇𝗄', callback_data=f'streamfile:{file_id}')],
-            [InlineKeyboardButton('𝖴𝗉𝖽𝖺𝗍𝖾 𝖢𝗁𝖺𝗇𝗇𝖾𝗅', url=UPDATE_CHANNEL_LNK)]
+            [InlineKeyboardButton('𝖴𝗉𝖽𝖺𝗍𝖾 𝖢𝗁𝖺𝗇𝗇𝖾𝗅 📢', url=UPDATE_CHANNEL_LNK)]
         ]
     else:
         btn = [
-            [InlineKeyboardButton('⚡ Update Channel', url=UPDATE_CHANNEL_LNK)]
+            [InlineKeyboardButton('𝖴𝗉𝖽𝖺𝗍𝖾 𝖢𝗁𝖺𝗇𝗇𝖾𝗅 📢', url=UPDATE_CHANNEL_LNK)]
         ]
     msg = await client.send_cached_media(
         chat_id=message.from_user.id,
@@ -386,7 +386,7 @@ async def start(client, message):
         protect_content=settings.get('file_secure', PROTECT_CONTENT),
         reply_markup=InlineKeyboardMarkup(btn)
     )
-    k = await msg.reply(f"<b>⚡ Auto-Deleting File After {get_time(DELETE_TIME)}</b>", quote=True)     
+    k = await msg.reply(f"<b>⚠️ File disappears in ⏰ <code>{get_time(DELETE_TIME)}</code> \n📥 Forward to another chat to download!</b>", quote=True)     
     await asyncio.sleep(DELETE_TIME)
     await msg.delete()
     await k.edit_text("<b>✨ File Deleted!</b>")
@@ -482,32 +482,32 @@ async def delete_all_index_confirm(bot, message):
     await Media.collection.drop()
     if MULTIPLE_DB:    
         await Media2.collection.drop()
-    await message.answer("🗑️ Everything’s Gone")
-    await message.message.edit('🗑️ All Indexed Files Deleted')
+    await message.answer("Eᴠᴇʀʏᴛʜɪɴɢ's Gᴏɴᴇ")
+    await message.message.edit('ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ᴀʟʟ ɪɴᴅᴇxᴇᴅ ꜰɪʟᴇꜱ ✅')
 
 @Client.on_message(filters.command('settings'))
 async def settings(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🚧 Currently upgrading… Will return soon 🔜", disable_web_page_preview=True)
         return
     user_id = message.from_user.id if message.from_user else None
     if not user_id:
-        return await message.reply(f"ʏᴏᴜ'ʀᴇ ᴀɴᴏɴʏᴍᴏᴜꜱ ᴀᴅᴍɪɴ.")
+        return await message.reply(f"🕵️‍♂️ Admin Status: Anonymous")
     chat_type = message.chat.type
     if chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         grp_id = message.chat.id
         if not await is_check_admin(client, grp_id, message.from_user.id):
-            return await message.reply_text('<b>🚫 You’re Not an Admin!</b>')
+            return await message.reply_text('<b>🔒 Admin Privileges Required</b>')
         await db.connect_group(grp_id, user_id)
         btn = [[
-                InlineKeyboardButton("👤 Open in Private Chat", callback_data=f"opnsetpm#{grp_id}")
+                InlineKeyboardButton("👥 Start Private Chat", callback_data=f"opnsetpm#{grp_id}")
               ],[
                 InlineKeyboardButton("👥 Open Here", callback_data=f"opnsetgrp#{grp_id}")
               ]]
         await message.reply_text(
-                text="<b>🛠️ Open Settings Here or There?</b>",
+                text="<b>🛠️ Pick Settings Menu Location</b>",
                 reply_markup=InlineKeyboardMarkup(btn),
                 disable_web_page_preview=True,
                 parse_mode=enums.ParseMode.HTML,
@@ -527,7 +527,7 @@ async def settings(client, message):
             except Exception as e:
                 LOGGER.error(f"Error In PM Settings Button - {e}")
                 pass
-        await message.reply_text('Here Is Your Connected Groups.', reply_markup=InlineKeyboardMarkup(group_list))
+        await message.reply_text('📌 Groups You’re Connected To', reply_markup=InlineKeyboardMarkup(group_list))
                                                                                                             
 
 @Client.on_message(filters.command('reload'))
@@ -535,7 +535,7 @@ async def connect_group(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🚧 Currently upgrading… Will return soon 🔜", disable_web_page_preview=True)
         return
     user_id = message.from_user.id
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
@@ -561,7 +561,7 @@ async def requests(bot, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"🛠️ Under Maintenance… Back Soon! 🔜", disable_web_page_preview=True)
+        await message.reply_text(f"🚧 Currently upgrading… Will return soon 🔜", disable_web_page_preview=True)
         return
     if REQST_CHANNEL is None or SUPPORT_CHAT_ID is None: return # Must add REQST_CHANNEL and SUPPORT_CHAT_ID to use this feature
     if message.reply_to_message and SUPPORT_CHAT_ID == message.chat.id:
@@ -573,22 +573,22 @@ async def requests(bot, message):
         try:
             if REQST_CHANNEL is not None:
                 btn = [[
-                        InlineKeyboardButton('👀 View Request', url=f"{message.reply_to_message.link}"),
-                        InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
+                        InlineKeyboardButton('📝 Request Details', url=f"{message.reply_to_message.link}"),
+                        InlineKeyboardButton('🛠️ Open Options', callback_data=f'show_option#{reporter}')
                       ]]
-                reported_post = await bot.send_message(chat_id=REQST_CHANNEL, text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                reported_post = await bot.send_message(chat_id=REQST_CHANNEL, text=f"<b>📄 Request: <u>{content}</u> \n👥 Reported by: {mention} | ID: {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                 success = True
             elif len(content) >= 3:
                 for admin in ADMINS:
                     btn = [[
-                        InlineKeyboardButton('👀 View Request', url=f"{message.reply_to_message.link}"),
-                        InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
+                        InlineKeyboardButton('📝 Request Details', url=f"{message.reply_to_message.link}"),
+                        InlineKeyboardButton('🛠️ Open Options', callback_data=f'show_option#{reporter}')
                       ]]
-                    reported_post = await bot.send_message(chat_id=admin, text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                    reported_post = await bot.send_message(chat_id=admin, text=f"<b>📄 Request: <u>{content}</u> \n👥 Reported by: {mention} | ID: {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                     success = True
             else:
                 if len(content) < 3:
-                    await message.reply_text("⚠️ Please Type Your Request (Min 3 Characters).</b>")
+                    await message.reply_text("<b>✏️ Type at least 3 characters for your request!</b>")
             if len(content) < 3:
                 success = False
         except Exception as e:
@@ -608,22 +608,22 @@ async def requests(bot, message):
         try:
             if REQST_CHANNEL is not None and len(content) >= 3:
                 btn = [[
-                        InlineKeyboardButton('👀 View Request', url=f"{message.link}"),
-                        InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
+                        InlineKeyboardButton('📝 Request Details', url=f"{message.link}"),
+                        InlineKeyboardButton('🛠️ Open Options', callback_data=f'show_option#{reporter}')
                       ]]
-                reported_post = await bot.send_message(chat_id=REQST_CHANNEL, text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                reported_post = await bot.send_message(chat_id=REQST_CHANNEL, text=f"<b>📄 Request: <u>{content}</u> \n👥 Reported by: {mention} | ID: {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                 success = True
             elif len(content) >= 3:
                 for admin in ADMINS:
                     btn = [[
-                        InlineKeyboardButton('👀 View Request', url=f"{message.link}"),
-                        InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
+                        InlineKeyboardButton('📝 Request Details', url=f"{message.link}"),
+                        InlineKeyboardButton('🛠️ Open Options', callback_data=f'show_option#{reporter}')
                       ]]
-                    reported_post = await bot.send_message(chat_id=admin, text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                    reported_post = await bot.send_message(chat_id=admin, text=f"<b>📄 Request: <u>{content}</u> \n👥 Reported by: {mention} | ID: {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                     success = True
             else:
                 if len(content) < 3:
-                    await message.reply_text("⚠️ Please Type Your Request (Min 3 Characters).</b>")
+                    await message.reply_text("<b>✏️ Type at least 3 characters for your request!</b>")
             if len(content) < 3:
                 success = False
         except Exception as e:
@@ -643,22 +643,22 @@ async def requests(bot, message):
         try:
             if REQST_CHANNEL is not None and len(content) >= 3:
                 btn = [[
-                        InlineKeyboardButton('👀 View Request', url=f"{message.link}"),
-                        InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
+                        InlineKeyboardButton('📝 Request Details', url=f"{message.link}"),
+                        InlineKeyboardButton('🛠️ Open Options', callback_data=f'show_option#{reporter}')
                       ]]
-                reported_post = await bot.send_message(chat_id=REQST_CHANNEL, text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                reported_post = await bot.send_message(chat_id=REQST_CHANNEL, text=f"<b>📄 Request: <u>{content}</u> \n👥 Reported by: {mention} | ID: {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                 success = True
             elif len(content) >= 3:
                 for admin in ADMINS:
                     btn = [[
-                        InlineKeyboardButton('👀 View Request', url=f"{message.link}"),
-                        InlineKeyboardButton('⚙️ Show Options', callback_data=f'show_option#{reporter}')
+                        InlineKeyboardButton('📝 Request Details', url=f"{message.link}"),
+                        InlineKeyboardButton('🛠️ Open Options', callback_data=f'show_option#{reporter}')
                       ]]
-                    reported_post = await bot.send_message(chat_id=admin, text=f"<b>📝 Request : <u>{content}</u>\n\n📚 Reported by : {mention}\n📖 Reporter id : {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
+                    reported_post = await bot.send_message(chat_id=admin, text=f"<b>📄 Request: <u>{content}</u> \n👥 Reported by: {mention} | ID: {reporter}\n\n</b>", reply_markup=InlineKeyboardMarkup(btn))
                     success = True
             else:
                 if len(content) < 3:
-                    await message.reply_text("<b>⚠️ Please Type Your Request (Min 3 Characters).</b>")
+                    await message.reply_text("<b>✏️ Type at least 3 characters for your request!</b>")
             if len(content) < 3:
                 success = False
         except Exception as e:
@@ -669,11 +669,11 @@ async def requests(bot, message):
     if success:
         link = await bot.create_chat_invite_link(int(REQST_CHANNEL))
         btn = [[
-                InlineKeyboardButton('🔗 Join Channel', url=link.invite_link),
-                InlineKeyboardButton('👀 View Request', url=f"{reported_post.link}")
+                InlineKeyboardButton('📢 Join Channel', url=link.invite_link),
+                InlineKeyboardButton('📝 Request Details', url=f"{reported_post.link}")
               ]]
-        await message.reply_text("<b>✅ Your Request Has Been Added! \n\n⏳ Please wait a moment…</b>", reply_markup=InlineKeyboardMarkup(btn))
-    
+        await message.reply_text("<b>📝 Request Recorded!</b>", reply_markup=InlineKeyboardMarkup(btn))
+   
 @Client.on_message(filters.command("send") & filters.user(ADMINS))
 async def send_msg(bot, message):
     if message.reply_to_message:
