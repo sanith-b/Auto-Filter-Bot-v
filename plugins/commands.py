@@ -98,7 +98,7 @@ async def start(client, message):
                 ],[
                     InlineKeyboardButton('🔥 Trending', callback_data="topsearch"),
                     InlineKeyboardButton('💖 Support Us', callback_data="premium"),
-                ],[💖 Support Us
+                ],[
                     InlineKeyboardButton('🆘 Help', callback_data='disclaimer'),
                     InlineKeyboardButton('ℹ️ About', callback_data='me')
                 ],[
