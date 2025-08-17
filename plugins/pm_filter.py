@@ -813,8 +813,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
                         logger.info(f'📂 File found for "{keyword}"!  \n✅ Successfully deleted "{file_name}" from database.')
                     deleted += 1
                     if deleted % 20 == 0:
-                        await query.message.edit_text(f"<b>🔹 Deleting files... \n✅ {str(deleted)} files for "{keyword}" cleared from database! \n⌛ Hold tight...</b>")
-            except Exception as e:
+                        await query.message.edit_text(f"<b>ᴘʀᴏᴄᴇꜱꜱ ꜱᴛᴀʀᴛᴇᴅ ꜰᴏʀ ᴅᴇʟᴇᴛɪɴɢ ꜰɪʟᴇꜱ ꜰʀᴏᴍ ᴅʙ. ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ {str(deleted)} ꜰɪʟᴇꜱ ꜰʀᴏᴍ ᴅʙ ꜰᴏʀ ʏᴏᴜʀ ǫᴜᴇʀʏ {keyword} !\n\nᴘʟᴇᴀꜱᴇ ᴡᴀɪᴛ...</b>")
+			except Exception as e:
                 LOGGER.error(f"Error In killfiledq -{e}")
                 await query.message.edit_text(f'Error: {e}')
             else:
@@ -875,9 +875,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     InlineKeyboardButton('📝 Add Caption', callback_data=f'caption_setgs#{grp_id}',),
                 ],
                 [
-                    InlineKeyboardButton('🔒 Exit Settings', 
-                                         callback_data='close_data'
-                                         )
+                    InlineKeyboardButton('🔒 Exit Settings', callback_data='close_data', )
                 ]
             ]
             reply_markup = InlineKeyboardMarkup(buttons)
