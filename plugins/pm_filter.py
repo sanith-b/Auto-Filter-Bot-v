@@ -794,7 +794,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         ident, keyword = query.data.split("#")
         await query.message.edit_text(f"<b>Fetching Files for your query {keyword} on DB... Please wait...</b>")
         files, total = await get_bad_files(keyword)
-        await query.message.edit_text("<b>⭐ File deletion starts in 5s! ⏳</b>")
+        await query.message.edit_text("<b>ꜰɪʟᴇ ᴅᴇʟᴇᴛɪᴏɴ ᴘʀᴏᴄᴇꜱꜱ ᴡɪʟʟ ꜱᴛᴀʀᴛ ɪɴ 5 ꜱᴇᴄᴏɴᴅꜱ !</b>")
         await asyncio.sleep(5)
         deleted = 0
         async with lock:
@@ -810,16 +810,16 @@ async def cb_handler(client: Client, query: CallbackQuery):
                             '_id': file_ids,
                         })
                     if result.deleted_count:
-                        logger.info(f'📂 File found for "{keyword}"!  \n✅ Successfully deleted "{file_name}" from database.')
+                        logger.info(f'ꜰɪʟᴇ ꜰᴏᴜɴᴅ ꜰᴏʀ ʏᴏᴜʀ ǫᴜᴇʀʏ {keyword}! ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ {file_name} ꜰʀᴏᴍ ᴅᴀᴛᴀʙᴀꜱᴇ.')
                     deleted += 1
                     if deleted % 20 == 0:
                         await query.message.edit_text(f"<b>ᴘʀᴏᴄᴇꜱꜱ ꜱᴛᴀʀᴛᴇᴅ ꜰᴏʀ ᴅᴇʟᴇᴛɪɴɢ ꜰɪʟᴇꜱ ꜰʀᴏᴍ ᴅʙ. ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ {str(deleted)} ꜰɪʟᴇꜱ ꜰʀᴏᴍ ᴅʙ ꜰᴏʀ ʏᴏᴜʀ ǫᴜᴇʀʏ {keyword} !\n\nᴘʟᴇᴀꜱᴇ ᴡᴀɪᴛ...</b>")
-			except Exception as e:
+            except Exception as e:
                 LOGGER.error(f"Error In killfiledq -{e}")
                 await query.message.edit_text(f'Error: {e}')
             else:
-                await query.message.edit_text(f"<b>✅ Process complete! \n🗑️ {str(deleted)} files for "{keyword}" have been successfully deleted from the DB.</b>")
-
+                await query.message.edit_text(f"<b>ᴘʀᴏᴄᴇꜱꜱ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ꜰᴏʀ ꜰɪʟᴇ ᴅᴇʟᴇᴛᴀᴛɪᴏɴ !\n\nꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ {str(deleted)} ꜰɪʟᴇꜱ ꜰʀᴏᴍ ᴅʙ ꜰᴏʀ ʏᴏᴜʀ ǫᴜᴇʀʏ {keyword}.</b>")
+				
     elif query.data.startswith("opnsetgrp"):
         ident, grp_id = query.data.split("#")
         userid = query.from_user.id if query.from_user else None
