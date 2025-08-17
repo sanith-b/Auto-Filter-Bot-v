@@ -11,8 +11,8 @@ CMD = ["/", "."]
 
 @Client.on_message(filters.command("alive", CMD))
 async def check_alive(_, message):
-    sticker = await message.reply_sticker("CAACAgIAAxkBAAEBVAlmCYqbLub_o5pVUOEwbqhV8kRytgACRBkAAgjh2UlSqev16oISqB4E") 
-    text = await message.reply_text("Yᴏᴜ ᴀʀᴇ ᴠᴇʀʏ ʟᴜᴄᴋʏ 🤞 I ᴀᴍ ᴀʟɪᴠᴇ ❤️\nPʀᴇss /start ᴛᴏ ᴜsᴇ ᴍᴇ!")
+    sticker = await message.reply_sticker("AAMCAgADGQEAATm1fWiiFL8YcedZ1CrHEfqxtyPYr1xHAAK0DgACeuewSEicxAjipUlPAQAHbQADNgQ") 
+    text = await message.reply_text("🤞 Lucky you! I’m alive ❤️ \n\n/start to begin 🚀")
     await asyncio.sleep(60)
     await sticker.delete()
     await text.delete()
@@ -86,7 +86,7 @@ async def calculate_latency():
     latency = (end - start) * 1000
     return f"{latency:.3f} ms"
 
-@Client.on_message(filters.command("system"))
+@Client.on_message(filters.command("system") & filters.user(ADMINS)))
 async def send_system_info(client, message):
     system_info = get_system_info()
     latency = await calculate_latency() 
