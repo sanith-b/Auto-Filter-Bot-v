@@ -274,24 +274,22 @@ async def qualities_cb_handler(client: Client, query: CallbackQuery):
                 )
         except:
             pass
-
-        # Now qualities are selected PER FILE
-        _, file_id, offset = query.data.split("#")
+        _, key, offset = query.data.split("#")
+        search = FRESH.get(key)
         offset = int(offset)
-
+        search = search.replace(' ', '_')
         btn = []
-        for i in range(0, len(QUALITIES) - 1, 2):
+        for i in range(0, len(QUALITIES)-1, 2):
             btn.append([
                 InlineKeyboardButton(
                     text=QUALITIES[i].title(),
-                    callback_data=f"fq#{QUALITIES[i].lower()}#{file_id}#{offset}"
+                    callback_data=f"fq#{QUALITIES[i].lower()}#{key}#{offset}"
                 ),
                 InlineKeyboardButton(
-                    text=QUALITIES[i + 1].title(),
-                    callback_data=f"fq#{QUALITIES[i + 1].lower()}#{file_id}#{offset}"
+                    text=QUALITIES[i+1].title(),
+                    callback_data=f"fq#{QUALITIES[i+1].lower()}#{key}#{offset}"
                 ),
             ])
-
         btn.insert(
             0,
             [
@@ -300,21 +298,29 @@ async def qualities_cb_handler(client: Client, query: CallbackQuery):
                 )
             ],
         )
-        btn.append(
-            [InlineKeyboardButton(text="↭ ʙᴀᴄᴋ ᴛᴏ ꜰɪʟᴇ ↭", callback_data=f"file#{file_id}")]
-        )
-
+        req = query.from_user.id
+        offset = 0
+        btn.append([InlineKeyboardButton(text="↭ ʙᴀᴄᴋ ᴛᴏ ꜰɪʟᴇs ↭", callback_data=f"fq#homepage#{key}#{offset}")])
         await query.edit_message_reply_markup(InlineKeyboardMarkup(btn))
     except Exception as e:
         LOGGER.error(f"Error In Quality Callback Handler - {e}")
 
-
 @Client.on_callback_query(filters.regex(r"^fq#"))
 async def filter_qualities_cb_handler(client: Client, query: CallbackQuery):
     try:
-        _, qual, file_id, offset = query.data.split("#")
+        _, qual, key, offset = query.data.split("#")
         offset = int(offset)
-
+        curr_time = datetime.now(pytz.timezone('Asia/Kolkata')).time()
+        search = FRESH.get(key)
+        search = search.replace("_", " ")
+        baal = qual in search
+        if baal:
+            search = search.replace(qual, "")
+        else:
+            search = search
+        req = query.from_user.id
+        chat_id = query.message.chat.id
+        message = query.message
         try:
             if int(query.from_user.id) not in [query.message.reply_to_message.from_user.id, 0]:
                 return await query.answer(
@@ -323,32 +329,84 @@ async def filter_qualities_cb_handler(client: Client, query: CallbackQuery):
                 )
         except:
             pass
-
-        # Fetch file details from DB/cache
-        file = await get_file_by_id(file_id)
-        if not file:
-            await query.answer("⚡ File not found!", show_alert=1)
+        if qual != "homepage":
+            search = f"{search} {qual}" 
+        BUTTONS[key] = search   
+        files, n_offset, total_results = await get_search_results(chat_id, search, offset=offset, filter=True)
+        if not files:
+            await query.answer("⚡ Sorry, nothing was found!", show_alert=1)
             return
-
-        # Attach quality to filename
-        selected_name = f"{clean_filename(file.file_name)} [{qual.upper()}]"
-
-        btn = [
-            [InlineKeyboardButton("📥 Download", callback_data=f"download#{file_id}#{qual}")],
-            [InlineKeyboardButton("↭ ʙᴀᴄᴋ ᴛᴏ ǫᴜᴀʟɪᴛɪᴇꜱ ↭", callback_data=f"qualities#{file_id}#{offset}")]
-        ]
-
-        cap = f"**🎬 Selected File:**\n`{selected_name}`\n\n**⭐ Quality:** {qual.upper()}"
-
-        try:
-            await query.message.edit_text(
-                text=cap,
-                reply_markup=InlineKeyboardMarkup(btn),
-                disable_web_page_preview=True
+        temp.GETALL[key] = files
+        settings = await get_settings(message.chat.id)
+        if settings.get('button'):
+            btn = [
+                [
+                    InlineKeyboardButton(
+                        text=f"{silent_size(file.file_size)}| {extract_tag(file.file_name)} {clean_filename(file.file_name)}", callback_data=f'file#{file.file_id}'
+                    ),
+                ]
+                for file in files
+            ]
+            btn.insert(0, 
+                [ 
+                    InlineKeyboardButton("⭐ Quality", callback_data=f"qualities#{key}#0"),
+                        InlineKeyboardButton("🗓️ Season",  callback_data=f"seasons#{key}#0")
+                ]
             )
-        except MessageNotModified:
-            pass
+            btn.insert(1, [
+                InlineKeyboardButton("🚀 Send All Files", callback_data=f"sendfiles#{key}")
+           
+            ])
 
+        else:
+            btn = []
+            btn.insert(0, 
+                [
+                    InlineKeyboardButton("⭐ Quality", callback_data=f"qualities#{key}#0"),
+                        InlineKeyboardButton("🗓️ Season",  callback_data=f"seasons#{key}#0")
+                ]
+            )
+            btn.insert(1, [           
+                InlineKeyboardButton("🚀 Send All Files", callback_data=f"sendfiles#{key}")
+           
+            ])
+        if n_offset != "":
+            try:
+                if settings['max_btn']:
+                    btn.append(
+                        [InlineKeyboardButton("📄 Page", callback_data="pages"), InlineKeyboardButton(text=f"1/{math.ceil(int(total_results)/10)}",callback_data="pages"), InlineKeyboardButton(text="➡️ Next",callback_data=f"next_{req}_{key}_{n_offset}")]
+                    )
+    
+                else:
+                    btn.append(
+                        [InlineKeyboardButton("📄 Page", callback_data="pages"), InlineKeyboardButton(text=f"1/{math.ceil(int(total_results)/int(MAX_B_TN))}",callback_data="pages"), InlineKeyboardButton(text="➡️ Next",callback_data=f"next_{req}_{key}_{n_offset}")]
+                    )
+            except KeyError:
+                await save_group_settings(query.message.chat.id, 'max_btn', True)
+                btn.append(
+                    [InlineKeyboardButton("📄 Page", callback_data="pages"), InlineKeyboardButton(text=f"1/{math.ceil(int(total_results)/10)}",callback_data="pages"), InlineKeyboardButton(text="➡️ Next",callback_data=f"next_{req}_{key}_{n_offset}")]
+                )
+        else:
+            n_offset = 0
+            btn.append(
+                [InlineKeyboardButton(text="🚫 That’s everything!",callback_data="pages")]
+            )               
+        if not settings.get('button'):
+            cur_time = datetime.now(pytz.timezone('Asia/Kolkata')).time()
+            time_difference = timedelta(hours=cur_time.hour, minutes=cur_time.minute, seconds=(cur_time.second+(cur_time.microsecond/1000000))) - timedelta(hours=curr_time.hour, minutes=curr_time.minute, seconds=(curr_time.second+(curr_time.microsecond/1000000)))
+            remaining_seconds = "{:.2f}".format(time_difference.total_seconds())
+            cap = await get_cap(settings, remaining_seconds, files, query, total_results, search, offset)
+            try:
+                await query.message.edit_text(text=cap, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=True)
+            except MessageNotModified:
+                pass
+        else:
+            try:
+                await query.edit_message_reply_markup(
+                    reply_markup=InlineKeyboardMarkup(btn)
+                )
+            except MessageNotModified:
+                pass
         await query.answer()
     except Exception as e:
         LOGGER.error(f"Error In Quality - {e}")
