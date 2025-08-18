@@ -4,15 +4,19 @@ class script(object):
 
     FEATURES_TXT = """<b>ʜᴇʀᴇ ɪꜱ ᴀʟʟ ᴍʏ ꜰᴜɴᴛɪᴏɴꜱ.</b>"""
 
-    ABOUT_TXT = """<b>╭────[ ᴍʏ ᴅᴇᴛᴀɪʟs ]────⍟
-├⍟ ᴍʏ ɴᴀᴍᴇ : <a href=https://t.me/{}>{}</a>
-├⍟ ᴏᴡɴᴇʀ : <a href={}>ᴏᴡɴᴇʀ</a> 
-├⍟ ʟɪʙʀᴀʀʏ : <a href='https://docs.pyrogram.org/'>ᴘʏʀᴏɢʀᴀᴍ</a>
-├⍟ ʟᴀɴɢᴜᴀɢᴇ : <a href='https://www.python.org/download/releases/3.0/'>ᴘʏᴛʜᴏɴ 𝟹</a> 
-├⍟ ᴅᴀᴛᴀʙᴀꜱᴇ : <a href='https://www.mongodb.com/'>ᴍᴏɴɢᴏ ᴅʙ</a> 
-├⍟ ꜱᴇʀᴠᴇʀ : <a href='https://heroku.com/'>ʜᴇʀᴏᴋᴜ</a> 
-├⍟ ꜱᴛᴀᴛᴜꜱ : ᴠ4.8 [ ꜱᴛᴀʙʟᴇ ]
-╰───────────────⍟</b>"""
+    ABOUT_TXT = """🌸 About My K-Drama Bot 🌸
+
+My K-Drama Bot is your <b>go-to Telegram companion for all things K-Drama!</b> Whether you’re looking for the latest hits, timeless classics, or hidden gems, this bot brings the entire K-Drama world to your fingertips.
+
+📚 <b>Massive Library</b> – Thousands of episodes, from trending shows to beloved favorites.
+🔍 <b>Smart Search</b> – Find dramas instantly with easy filters.
+🎥 <b>IMDb Info</b> – Check ratings, cast, and details without leaving Telegram.
+📥 <b>Easy Downloads</b> – Save episodes to watch anytime.
+📝 <b>Request Favorites</b> – Missing a show? Request it, and it might appear soon!
+⏰ <b>24/7 Availability</b> – Your K-Drama companion is always online, ready to entertain.
+👥 <b>Group Support</b> – Use the bot in groups to share dramas with friends and communities.
+
+Experience K-Drama like never before, all in <b>one seamless, fun, and easy-to-use bot!</b>"""
 
     FORCESUB_TEXT="""<b>
 ɪɴ ᴏʀᴅᴇʀ ᴛᴏ ɢᴇᴛ ᴛʜᴇ ᴍᴏᴠɪᴇ ʀᴇᴏ̨ᴜᴇsᴛᴇᴅ ʙʏ ʏᴏᴜ.
