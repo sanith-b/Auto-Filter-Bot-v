@@ -33,7 +33,7 @@ TON = (environ.get('TON', 'https://files.catbox.moe/myk6p2.jpg'))
 BITCOIN = (environ.get('BITCOIN', 'https://files.catbox.moe/ehs5i7.jpg'))
 USDTQR = (environ.get('USDTQR', 'https://files.catbox.moe/yyepjk.jpg'))
 TONQR = (environ.get('TONQR', 'https://files.catbox.moe/nzx7g3.jpg'))
-TONQR = (environ.get('BITCOINQR', 'https://files.catbox.moe/wqfh2c.jpg'))
+BITCOINQR = (environ.get('BITCOINQR', 'https://files.catbox.moe/wqfh2c.jpg'))
 
 ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '').split()] 
 CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '-100').split()]
