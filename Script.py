@@ -189,7 +189,7 @@ You're using one of my old messages ⚠️
 Please send your request again ✉️
 """
 
-    CUDNT_FND = """I couldn't find anything related to {query} ❌  
+    CUDNT_FND = """I couldn't find anything related to {} ❌  
 Did you mean one of these? 💡
 """
 
