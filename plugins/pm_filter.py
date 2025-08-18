@@ -1619,9 +1619,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif query.data == "disclaimer":
         try:
             btn = [[
-				    InlineKeyboardButton('👤 User Commands', callback_data='ihelp'),
-                    InlineKeyboardButton('🏘 Group Commands', callback_data='ghelp'),
-			       ],[
                     InlineKeyboardButton("⬅️ Back", callback_data="start"),
                   ]]
             reply_markup = InlineKeyboardMarkup(btn)                        
@@ -1635,46 +1632,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 reply_markup=reply_markup,
                 parse_mode=enums.ParseMode.HTML
             )
-        except Exception as e:
-            LOGGER.error(e)
-
-    elif query.data == "ihelp":
-        try:
-            btn = [[
-                    InlineKeyboardButton("⬅️ Back", callback_data="disclaimer"),
-				    InlineKeyboardButton('🏠 Back to Home', callback_data='start')
-			]]
-            reply_markup = InlineKeyboardMarkup(btn)
-            await client.edit_message_media(
-                query.message.chat.id, 
-                query.message.id, 
-                InputMediaPhoto(random.choice(PICS))
-	        ) 
-            await query.message.edit_text(
-                text=script.IHELP_TXT.format(query.from_user.mention),
-                reply_markup=reply_markup,
-                parse_mode=enums.ParseMode.HTML
-            ) 
-        except Exception as e:
-            LOGGER.error(e)
-
-    elif query.data == "dghelp":
-        try:
-            btn = [[
-                    InlineKeyboardButton("⬅️ Back", callback_data="disclaimer"),
-				    InlineKeyboardButton('🏠 Back to Home', callback_data='start')
-			]]
-            reply_markup = InlineKeyboardMarkup(btn)
-            await client.edit_message_media(
-                query.message.chat.id, 
-                query.message.id, 
-                InputMediaPhoto(random.choice(PICS))
-	        ) 
-            await query.message.edit_text(
-                text=script.GHELP_TXT.format(query.from_user.mention),
-                reply_markup=reply_markup,
-                parse_mode=enums.ParseMode.HTML
-            ) 
         except Exception as e:
             LOGGER.error(e)
 	
