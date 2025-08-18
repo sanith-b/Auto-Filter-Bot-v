@@ -135,14 +135,13 @@ async def plan(client, message):
     users = message.from_user.mention
     log_message = f"<b><u>🚫 ᴛʜɪs ᴜsᴇʀs ᴛʀʏ ᴛᴏ ᴄʜᴇᴄᴋ /plan</u> {temp.B_LINK}\n\n- ɪᴅ - `{user_id}`\n- ɴᴀᴍᴇ - {users}</b>" 
     btn = [[
-            InlineKeyboardButton('• ʙᴜʏ ᴘʀᴇᴍɪᴜᴍ •', callback_data='buy'),           
+            InlineKeyboardButton('💰 Contribute', callback_data='buy'),           
     ],[                
-	    InlineKeyboardButton('• ʀᴇꜰᴇʀ ꜰʀɪᴇɴᴅꜱ', callback_data='reffff'),                
-	    InlineKeyboardButton('ꜰʀᴇᴇ ᴛʀɪᴀʟ •', callback_data='free')        
+	    InlineKeyboardButton('👥 Invite Friends', callback_data='reffff')            
     ],[            
-            InlineKeyboardButton('🚫 ᴄʟᴏꜱᴇ 🚫', callback_data='close_data')
+            InlineKeyboardButton('🏠 Back to Home', callback_data='close_data')
     ]]
-    msg = await message.reply_photo(photo="https://graph.org/file/86da2027469565b5873d6.jpg", caption=script.BPREMIUM_TXT, reply_markup=InlineKeyboardMarkup(btn))
+    msg = await message.reply_photo(photo="https://files.catbox.moe/ehs5i7.jpg", caption=script.BPREMIUM_TXT, reply_markup=InlineKeyboardMarkup(btn))
     await client.send_message(PREMIUM_LOGS, log_message)
     await asyncio.sleep(300)
     await msg.delete()
@@ -160,18 +159,18 @@ async def premium_button(client, callback_query: CallbackQuery):
         if amount in STAR_PREMIUM_PLANS:
             try:
                 buttons = [[	
-                    InlineKeyboardButton("ᴄᴀɴᴄᴇʟ 🚫", callback_data="cancel_star_premium"),		    				
+                    InlineKeyboardButton("Cancel 🚫", callback_data="cancel_star_premium"),		    				
                 ]]
                 reply_markup = InlineKeyboardMarkup(buttons)
                 await client.send_invoice(
                     chat_id=callback_query.message.chat.id,
-                    title="Premium Subscription",
-                    description=f"Pay {amount} Star And Get Premium For {STAR_PREMIUM_PLANS[amount]}",
+                    title="Donation for My K-Drama Bot",
+                    description=f"Pay {amount} Stars to donate My K-Drama Bot.",
                     payload=f"silentxpremium_{amount}",
                     currency="XTR",
                     prices=[
                         LabeledPrice(
-                            label="Premium Subscription", 
+                            label="Donation for My K-Drama Bot", 
                             amount=amount
                         ) 
                     ],
@@ -214,7 +213,7 @@ async def successful_premium_payment(client, message):
                 data = await db.get_user(user_id)
                 expiry = data.get("expiry_time")
                 expiry_str_in_ist = expiry.astimezone(pytz.timezone("Asia/Kolkata")).strftime("%d-%m-%Y | %I:%M:%S %p")    
-                await message.reply(text=f"Thankyou For Purchasing Premium Service Using Star ✅\n\nSubscribtion Time - {time}\nExpire In - {expiry_str_in_ist}", disable_web_page_preview=True)                
+                await message.reply(text=f"✨ Thank you so much for your generous donation to My K-Drama Bot! 🌸 \nYour support helps us keep improving and bringing you the best K-Drama experience. 💕 \n\n💳 You Donated: {amount} ⭐ \n⏰ Time: {time}", disable_web_page_preview=True)                
                 await client.send_message(PREMIUM_LOGS, text=f"#Purchase_Premium_With_Start\n\n👤 ᴜꜱᴇʀ - {user.mention}\n\n⚡ ᴜꜱᴇʀ ɪᴅ - <code>{user_id}</code>\n\n🚫 ꜱᴛᴀʀ ᴘᴀʏ - {amount}⭐\n\n⏰ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴄᴇꜱꜱ - {time}\n\n⌛️ ᴊᴏɪɴɪɴɢ ᴅᴀᴛᴇ - {current_time}\n\n⌛️ ᴇxᴘɪʀʏ ᴅᴀᴛᴇ - {expiry_str_in_ist}", disable_web_page_preview=True)
             else:
                 await message.reply("⚠️ Invalid Premium Time.")
@@ -222,7 +221,7 @@ async def successful_premium_payment(client, message):
             await message.reply("⚠️ Invalid Premium Package.")
     except Exception as e:
         LOGGER.error(f"Error Processing Premium Payment: {e}")
-        await message.reply("✅ Thank You For Your Payment! (Error Logging Details)")
+        await message.reply("✨ Thank you so much for your generous donation to My K-Drama Bot! 🌸")
 
 @Client.on_callback_query(filters.regex("cancel_star_premium"))
 async def cancel_premium(client, callback_query: CallbackQuery):
