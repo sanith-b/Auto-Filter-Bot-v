@@ -19,6 +19,28 @@ Tap <b>Help</b> for assistance and guidance
 
     FEATURES_TXT = """<b>ʜᴇʀᴇ ɪꜱ ᴀʟʟ ᴍʏ ꜰᴜɴᴛɪᴏɴꜱ.</b>"""
 
+    GHELP = """
+👥 Group Commands 
+
+⚙️ /settings – Manage group  
+📝 /set_log_channel – Set log  
+📢 /set_fsub – Force sub  
+❌ /remove_fsub – Remove fsub  
+🔄 /reset_group – Reset  
+👀 /details – Check settings
+    """
+    IHELP = """
+▶️ /start – Start bot
+
+🔥 /trendlist – Top searches
+
+💰 /plan – Donate Us
+
+🎬 /movie_update – Movie updates ON/OFF
+
+🎥 /imdb – Get IMDb info  
+
+    """
     ABOUT_TXT = """🌸 About My K-Drama Bot 🌸
 
 My K-Drama Bot is your <b>go-to Telegram companion for all things K-Drama!</b> Whether you’re looking for the latest hits, timeless classics, or hidden gems, this bot brings the entire K-Drama world to your fingertips.
@@ -34,14 +56,13 @@ My K-Drama Bot is your <b>go-to Telegram companion for all things K-Drama!</b> W
 Experience K-Drama like never before, all in <b>one seamless, fun, and easy-to-use bot!</b>"""
 
     FORCESUB_TEXT="""<b>
-ɪɴ ᴏʀᴅᴇʀ ᴛᴏ ɢᴇᴛ ᴛʜᴇ ᴍᴏᴠɪᴇ ʀᴇᴏ̨ᴜᴇsᴛᴇᴅ ʙʏ ʏᴏᴜ.
+In order to get the movie you requested,  
+you must join our official update channel.  
 
-ʏᴏᴜ ᴡɪʟʟ ʜᴀᴠᴇ ᴛᴏ ᴊᴏɪɴ ᴏᴜʀ ᴏғғɪᴄɪᴀʟ ᴄʜᴀɴɴᴇʟ.
-
-ғɪʀsᴛ, ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ "Jᴏɪɴ ᴜᴘᴅᴀᴛᴇ Cʜᴀɴɴᴇʟ" ʙᴜᴛᴛᴏɴ, ᴛʜᴇɴ, ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ "ʀᴇᴏ̨ᴜᴇsᴛ ᴛᴏ Jᴏɪɴ" ʙᴜᴛᴛᴏɴ.
-
-ᴀғᴛᴇʀ ᴛʜᴀᴛ, ᴛʀʏ ᴀᴄᴄᴇssɪɴɢ ᴛʜᴀᴛ ᴍᴏᴠɪᴇ ᴛʜᴇɴ, ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ "ᴛʀʏ ᴀɢᴀɪɴ" ʙᴜᴛᴛᴏɴ.
-    </b>"""
+1️⃣ Click on "Join Update Channel"  
+2️⃣ Tap "Request to Join"  
+3️⃣ After that, try accessing the movie again and press "Try Again".  
+</b>"""
            
     MULTI_STATUS_TXT = """<b>╭────[ ᴅᴀᴛᴀʙᴀsᴇ 1 ]────⍟</b>
 │
@@ -160,60 +181,70 @@ Iᴅ - <code>{}</code>
 Nᴀᴍᴇ - {}
 """
 
-    ALRT_TXT = """ʜᴇʟʟᴏ {},
-ᴛʜɪꜱ ɪꜱ ɴᴏᴛ ʏᴏᴜʀ ᴍᴏᴠɪᴇ ʀᴇǫᴜᴇꜱᴛ,
-ʀᴇǫᴜᴇꜱᴛ ʏᴏᴜʀ'ꜱ..."""
+    ALRT_TXT = """Hello {user},  
+This is not your movie request.  
+Please request your own 🎬
+"""
 
-    OLD_ALRT_TXT = """ʜᴇʏ {},
-ʏᴏᴜ ᴀʀᴇ ᴜꜱɪɴɢ ᴏɴᴇ ᴏꜰ ᴍʏ ᴏʟᴅ ᴍᴇꜱꜱᴀɢᴇꜱ, 
-ᴘʟᴇᴀꜱᴇ ꜱᴇɴᴅ ᴛʜᴇ ʀᴇǫᴜᴇꜱᴛ ᴀɢᴀɪɴ."""
+    OLD_ALRT_TXT = """Hey {user},  
+You're using one of my old messages ⚠️  
+Please send your request again ✉️
+"""
 
-    CUDNT_FND = """ɪ ᴄᴏᴜʟᴅɴ'ᴛ ꜰɪɴᴅ ᴀɴʏᴛʜɪɴɢ ʀᴇʟᴀᴛᴇᴅ ᴛᴏ {}
-ᴅɪᴅ ʏᴏᴜ ᴍᴇᴀɴ ᴀɴʏ ᴏɴᴇ ᴏꜰ ᴛʜᴇꜱᴇ ?"""
+    CUDNT_FND = """I couldn't find anything related to {query} ❌  
+Did you mean one of these? 💡
+"""
 
-    I_CUDNT = """<b><i>ᴛʜɪꜱ ᴍᴏᴠɪᴇ ɪꜱ ɴᴏᴛ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴠᴀɪʟᴀʙʟᴇ.
-
-ɪᴛ ʜᴀꜱ ᴇɪᴛʜᴇʀ ɴᴏᴛ ʙᴇᴇɴ ʀᴇʟᴇᴀꜱᴇᴅ ᴏʀ ʜᴀꜱ ɴᴏᴛ ʏᴇᴛ ʙᴇᴇɴ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ᴅᴀᴛᴀʙᴀꜱᴇ.</i></b>"""
+    I_CUDNT = """🎬 <b><i>This movie is not available yet.  
+It may not be released or added to our database</i></b> ❌
+"""
     
-    I_CUD_NT = """<b><i>ᴛʜɪꜱ ᴍᴏᴠɪᴇ ɪꜱ ɴᴏᴛ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴠᴀɪʟᴀʙʟᴇ.
-
-ɪᴛ ʜᴀꜱ ᴇɪᴛʜᴇʀ ɴᴏᴛ ʙᴇᴇɴ ʀᴇʟᴇᴀꜱᴇᴅ ᴏʀ ʜᴀꜱ ɴᴏᴛ ʏᴇᴛ ʙᴇᴇɴ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ᴅᴀᴛᴀʙᴀꜱᴇ.</i></b>"""
+    I_CUD_NT = """<🎬 b><i>This movie isn’t available yet.  
+It may not be released or added to our database</i></b> ❌
+"""
     
-    MVE_NT_FND = """<b><i>ᴛʜɪꜱ ᴍᴏᴠɪᴇ ɪꜱ ɴᴏᴛ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴠᴀɪʟᴀʙʟᴇ.
-
-ɪᴛ ʜᴀꜱ ᴇɪᴛʜᴇʀ ɴᴏᴛ ʙᴇᴇɴ ʀᴇʟᴇᴀꜱᴇᴅ ᴏʀ ʜᴀꜱ ɴᴏᴛ ʏᴇᴛ ʙᴇᴇɴ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ᴅᴀᴛᴀʙᴀꜱᴇ.</i></b>"""
+    MVE_NT_FND = """🎬 <b><i>This movie isn’t available yet.  
+It may not be released or added to our database</i></b> ❌
+"""
     
-    TOP_ALRT_MSG = """ꜱᴇᴀʀᴄʜɪɴɢ ꜰᴏʀ ǫᴜᴇʀʏ ɪɴ ᴍʏ ᴅᴀᴛᴀʙᴀꜱᴇ..."""
+    TOP_ALRT_MSG = """🔍 Searching your query in my database..."""
 
-    MELCOW_ENG = """<b>👋 ʜᴇʏ {},\n\n🍁 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ\n🌟 {} \n\n🔍 ʜᴇʀᴇ ʏᴏᴜ ᴄᴀɴ ꜱᴇᴀʀᴄʜ ʏᴏᴜʀ ꜰᴀᴠᴏᴜʀɪᴛᴇ ᴍᴏᴠɪᴇꜱ ᴏʀ ꜱᴇʀɪᴇꜱ ʙʏ ᴊᴜꜱᴛ ᴛʏᴘɪɴɢ ɪᴛ'ꜱ ɴᴀᴍᴇ 🔎\n\n⚠️ ɪꜰ ʏᴏᴜ'ʀᴇ ʜᴀᴠɪɴɢ ᴀɴʏ ᴘʀᴏʙʟᴇᴍ ʀᴇɢᴀʀᴅɪɴɢ ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴏʀ ꜱᴏᴍᴇᴛʜɪɴɢ ᴇʟꜱᴇ ᴛʜᴇɴ ᴍᴇꜱꜱᴀɢᴇ ʜᴇʀᴇ 👇</b>"""
+    MELCOW_ENG = """👋 Hey {},   \n🍁 Welcome to 🌟 {}!   \n\n🔍 Search your favorite movies or series by typing the name 🔎   \n\n⚠️ Having trouble downloading or need help? Message us here 👇 </b>"""
     
     DISCLAIMER_TXT = """
-<b>ᴛʜɪꜱ ɪꜱ ᴀɴ ᴏᴘᴇɴ ꜱᴏᴜʀᴄᴇ ᴘʀᴏᴊᴇᴄᴛ.
+<b>Help menu!"""
 
-ᴀʟʟ ᴛʜᴇ ꜰɪʟᴇꜱ ɪɴ ᴛʜɪꜱ ʙᴏᴛ ᴀʀᴇ ꜰʀᴇᴇʟʏ ᴀᴠᴀɪʟᴀʙʟᴇ ᴏɴ ᴛʜᴇ ɪɴᴛᴇʀɴᴇᴛ ᴏʀ ᴘᴏꜱᴛᴇᴅ ʙʏ ꜱᴏᴍᴇʙᴏᴅʏ ᴇʟꜱᴇ. ᴊᴜꜱᴛ ꜰᴏʀ ᴇᴀꜱʏ ꜱᴇᴀʀᴄʜɪɴɢ ᴛʜɪꜱ ʙᴏᴛ ɪꜱ ɪɴᴅᴇxɪɴɢ ꜰɪʟᴇꜱ ᴡʜɪᴄʜ ᴀʀᴇ ᴀʟʀᴇᴀᴅʏ ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ ᴛᴇʟᴇɢʀᴀᴍ. ᴡᴇ ʀᴇꜱᴘᴇᴄᴛ ᴀʟʟ ᴛʜᴇ ᴄᴏᴘʏʀɪɢʜᴛ ʟᴀᴡꜱ ᴀɴᴅ ᴡᴏʀᴋꜱ ɪɴ ᴄᴏᴍᴘʟɪᴀɴᴄᴇ ᴡɪᴛʜ ᴅᴍᴄᴀ ᴀɴᴅ ᴇᴜᴄᴅ. ɪꜰ ᴀɴʏᴛʜɪɴɢ ɪꜱ ᴀɢᴀɪɴꜱᴛ ʟᴀᴡ ᴘʟᴇᴀꜱᴇ ᴄᴏɴᴛᴀᴄᴛ ᴍᴇ ꜱᴏ ᴛʜᴀᴛ ɪᴛ ᴄᴀɴ ʙᴇ ʀᴇᴍᴏᴠᴇᴅ ᴀꜱᴀᴘ. ɪᴛ ɪꜱ ꜰᴏʀʙɪʙʙᴇɴ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ, ꜱᴛʀᴇᴀᴍ, ʀᴇᴘʀᴏᴅᴜᴄᴇ, ꜱʜᴀʀᴇ ᴏʀ ᴄᴏɴꜱᴜᴍᴇ ᴄᴏɴᴛᴇɴᴛ ᴡɪᴛʜᴏᴜᴛ ᴇxᴘʟɪᴄɪᴛ ᴘᴇʀᴍɪꜱꜱɪᴏɴ ꜰʀᴏᴍ ᴛʜᴇ ᴄᴏɴᴛᴇɴᴛ ᴄʀᴇᴀᴛᴏʀ ᴏʀ ʟᴇɢᴀʟ ᴄᴏᴘʏʀɪɢʜᴛ ʜᴏʟᴅᴇʀ. ɪꜰ ʏᴏᴜ ʙᴇʟɪᴇᴠᴇ ᴛʜɪꜱ ʙᴏᴛ ɪꜱ ᴠɪᴏʟᴀᴛɪɴɢ ʏᴏᴜʀ ɪɴᴛᴇʟʟᴇᴄᴛᴜᴀʟ ᴘʀᴏᴘᴇʀᴛʏ, ᴄᴏɴᴛᴀᴄᴛ ᴛʜᴇ ʀᴇꜱᴘᴇᴄᴛɪᴠᴇ ᴄʜᴀɴɴᴇʟꜱ ꜰᴏʀ ʀᴇᴍᴏᴠᴀʟ. ᴛʜᴇ ʙᴏᴛ ᴅᴏᴇꜱ ɴᴏᴛ ᴏᴡɴ ᴀɴʏ ᴏꜰ ᴛʜᴇꜱᴇ ᴄᴏɴᴛᴇɴᴛꜱ, ɪᴛ ᴏɴʟʏ ɪɴᴅᴇx ᴛʜᴇ ꜰɪʟᴇꜱ ꜰʀᴏᴍ ᴛᴇʟᴇɢʀᴀᴍ. 
-</b>"""
+    PREMIUM_TEXT = """🌸 S<b>upport My K-Drama Bot!</b> 🌸
 
-    PREMIUM_TEXT = """<blockquote>🎖️ <b>ᴀᴠᴀɪʟᴀʙʟᴇ ᴘʟᴀɴs</b></blockquote>
+💖 Love using the bot? You can help us keep it running and bring more K-Dramas your way!
 
-◉ 07 ᴅᴀʏꜱ - 15 ₹ / 15 ꜱᴛᴀʀ 
-◉ 15 ᴅᴀʏꜱ - 30 ₹ / 30 ꜱᴛᴀʀ 
-◉ 01 ᴍᴏɴᴛʜꜱ - 60 ₹ / 60 ꜱᴛᴀʀ 
-◉ 02 ᴍᴏɴᴛʜꜱ - 120 ₹ / 120 ꜱᴛᴀʀ 
-◉ 03 ᴍᴏɴᴛʜꜱ - 220 ₹ / 220 ꜱᴛᴀʀ
+<b>How to Donate:</b>
 
-•─────•─────────•─────•
-🏷️ <a href='https://t.me/+blcE2jS-iGtkMjNl'>ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ ᴘʀᴏᴏꜰ</a>
+⭐ Telegram Stars
 
-‼️ ᴍᴜꜱᴛ ꜱᴇɴᴅ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ ᴀꜰᴛᴇʀ ᴘᴀʏᴍᴇɴᴛ.
-‼️ ᴀꜰᴛᴇʀ ꜱᴇɴᴅɪɴɢ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ ɢɪᴠᴇ ᴜꜱ ꜱᴏᴍᴇᴛɪᴍᴇꜱ ᴛᴏ ᴀᴅᴅ ʏᴏᴜ ɪɴ ᴘʀᴇᴍɪᴜᴍ ʟɪꜱᴛ."""
+1.Tap the <b>Star</b> button in the bot.
+2.Select the number of stars you want to contribute.
 
-    PREMIUM_STAR_TEXT = """<b><blockquote>ᴘᴀʏᴍᴇɴᴛ ᴍᴇᴛʜᴏᴅ: ᴛᴇʟᴇɢʀᴀᴍ ꜱᴛᴀʀꜱ ⭐</blockquote>
+Your support helps us improve and maintain the bot 24/7!
 
-ɴᴏᴡ ʏᴏᴜ ᴄᴀɴ ʙᴜʏ ᴏᴜʀ ᴘʀᴇᴍɪᴜᴍ ꜱᴇʀᴠɪᴄᴇ ᴜꜱɪɴɢ ᴛᴇʟᴇɢʀᴀᴍ ꜱᴛᴀʀꜱ.  
+💰 Cryptocurrency
 
-ɪꜰ ʏᴏᴜ ꜰᴀᴄᴇ ᴀɴʏ ᴘʀᴏʙʟᴇᴍ, ᴛᴀᴋᴇ ᴀ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ ᴀɴᴅ ꜱᴇɴᴅ ɪᴛ ᴛᴏ - @SilentXBotz
+We accept popular crypto payments.
 
-ꜱᴇʟᴇᴄᴛ ʏᴏᴜʀ ᴅᴇꜱɪʀᴇᴅ ᴀᴍᴏᴜɴᴛ ᴀɴᴅ ᴘᴜʀᴄʜᴀꜱᴇ ᴀ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ 👇.</b>
+Bitcoin (BTC)
+TON (TON)
+USDT (TRC20)
+
+🙏 Thank you for your support! Every contribution helps keep My K-Drama Bot online and full of content for K-Drama fans everywhere."""
+
+    PREMIUM_STAR_TEXT = """<b><blockquote>Donation Method: Telegram Stars ⭐</blockquote></b>
+
+📌 <b>How to donate:</b>
+
+1.Choose the number of stars you want to give.
+2.Enjoy knowing you’re helping the K-Drama community grow!
+
+🙏 <b>Thank you for supporting My K-Drama Bot!</b>
 """
     USDT_TEXT = """
 ▪️Coin - <code>USDT<?code>
@@ -236,35 +267,28 @@ Nᴀᴍᴇ - {}
 Scan QR Code
     """
     
-    PREMIUM_UPI_TEXT = """<b><blockquote>ᴘᴀʏᴍᴇɴᴛ ᴍᴇᴛʜᴏᴅ: ᴜᴘɪ</blockquote>
+    PREMIUM_UPI_TEXT = """<b>Payment Method: Cryptocurrency 💰</blockquote></b>
 
-ʏᴏᴜ ᴄᴀɴ ᴘᴜʀᴄʜᴀꜱᴇ ᴘʀᴇᴍɪᴜᴍ ᴛʜʀᴏᴜɢʜ ᴜᴘɪ , ɴᴇᴛ ʙᴀɴᴋɪɴɢ.
+⭐ <b>How to donate:</b>
 
-💳 ᴜᴘɪ ɪᴅ - <code>ɴᴏ ᴀᴠᴀɪʟᴀʙʟᴇ ʀɪɢʜᴛ ɴᴏᴡ</code>
+1.Send your preferred crypto to one of the wallet addresses above.
+2.Your contribution helps us maintain the bot, add new dramas, and improve features!
 
-💢 ᴍᴜꜱᴛ ꜱᴇɴᴅ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ ᴀꜰᴛᴇʀ ᴘᴀʏᴍᴇɴᴛ.
-
-‼️ ᴀꜰᴛᴇʀ ꜱᴇɴᴅɪɴɢ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ ᴘʟᴇᴀꜱᴇ ɢɪᴠᴇ ᴜꜱ ꜱᴏᴍᴇᴛɪᴍᴇ ᴛᴏ ᴀᴅᴅ ʏᴏᴜ ɪɴ ᴘʀᴇᴍɪᴜᴍ ʟɪꜱᴛ.</b>"""
+🙏 Thank you for supporting My K-Drama Bot! Every donation makes a difference!"""
     
     
-    BPREMIUM_TXT = """<blockquote>🎁 <b>ᴘʀᴇᴍɪᴜᴍ ꜰᴇᴀᴛᴜʀᴇꜱ</b> :</blockquote>
+    BPREMIUM_TXT = """🌸 <b>Support My K-Drama Bot!</b> 🌸
 
-○ ɴᴏ ɴᴇᴇᴅ ᴛᴏ ᴠᴇʀɪꜰʏ
-○ ɴᴏ ɴᴇᴇᴅ ᴛᴏ ᴏᴘᴇɴ ʟɪɴᴋꜱ
-○ ᴅɪʀᴇᴄᴛ ꜰɪʟᴇꜱ   
-○ ᴀᴅ-ꜰʀᴇᴇ ᴇxᴘᴇʀɪᴇɴᴄᴇ 
-○ ʜɪɢʜ-ꜱᴘᴇᴇᴅ ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ                         
-○ ᴍᴜʟᴛɪ-ᴘʟᴀʏᴇʀ ꜱᴛʀᴇᴀᴍɪɴɢ ʟɪɴᴋꜱ                           
-○ ᴜɴʟɪᴍɪᴛᴇᴅ ᴍᴏᴠɪᴇꜱ & ꜱᴇʀɪᴇꜱ                                                                        
-○ ꜰᴜʟʟ ᴀᴅᴍɪɴ ꜱᴜᴘᴘᴏʀᴛ                              
-○ ʀᴇǫᴜᴇꜱᴛ ᴡɪʟʟ ʙᴇ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ɪɴ 1ʜ [ ɪꜰ ᴀᴠᴀɪʟᴀʙʟᴇ ]
+💖 Love using the bot? You can help us keep it running and bring even more K-Dramas your way!
 
-• ʏᴏᴜ ᴄᴀɴ ɢᴇᴛ ᴘʀᴇᴍɪᴜᴍ ʙʏ ʀᴇꜰᴇʀɪɴɢ ʏᴏᴜʀ ꜰʀɪᴇɴᴅꜱ ᴏʀ ʏᴏᴜ ᴄᴀɴ ʙᴜʏ ᴘʀᴇᴍɪᴜᴍ ꜱᴇʀᴠɪᴄᴇ 
+<b>Ways to Support:</b>
 
-•─────•─────────•─────•
-◉ ᴄʜᴇᴄᴋ ʏᴏᴜʀ ᴀᴄᴛɪᴠᴇ ᴘʟᴀɴ : /myplan
+⭐ Telegram Stars – Tap the Donate button in the bot and send stars to support us.
+💰 Cryptocurrency – Contribute via BTC, ETH, or USDT to help maintain and improve the bot.
 
-‼️ ᴀꜰᴛᴇʀ ꜱᴇɴᴅɪɴɢ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ ɢɪᴠᴇ ᴜꜱ ꜱᴏᴍᴇᴛɪᴍᴇꜱ ᴛᴏ ᴀᴅᴅ ʏᴏᴜ ɪɴ ᴘʀᴇᴍɪᴜᴍ ʟɪꜱᴛ."""   
+🙏 Every contribution counts! Your support keeps the bot online 24/7 and helps us add more content and features for all K-Drama fans.
+
+💌 <b>Thank you for being part of our K-Drama community!</b>"""   
     
       
     NORSLTS = """ 
@@ -275,7 +299,7 @@ Nᴀᴍᴇ : {}
 
 Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
     
-    CAPTION = """<b>{file_name}\nUploaded By: <a herf="https://t.me/SilentXBotz">[SilentXBotz]</a></b>"""
+    CAPTION = """<b>Uploaded By: <a herf="https://t.me/myKdrama_bot">My K-Drama Bot</a></b>"""
 
     IMDB_TEMPLATE_TXT = """
 <b>🏷 Title</b>: <a href={url}>{title}</a>
@@ -283,9 +307,7 @@ Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
 � Year: <a href={url}/releaseinfo>{year}</a>
 🌟 Rating: <a href={url}/ratings>{rating}</a> / 10 (based on {votes} user ratings.)
 📀 RunTime: {runtime} Minutes
-
-⏰Result Shown in: {remaining_seconds} <i>seconds</i> 🔥
-Requested by : {message.from_user.mention}</b>"""    
+"""    
 
     RESTART_TXT = """
 <b>{} ʙᴏᴛ ʀᴇꜱᴛᴀʀᴛᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ !
@@ -353,6 +375,6 @@ Requested by : {message.from_user.mention}</b>"""
 • /reset_group - ʀᴇꜱᴇᴛ ʏᴏᴜʀ ꜱᴇᴛᴛɪɴɢꜱ.
 • /details - ᴄʜᴇᴄᴋ ʏᴏᴜʀ ꜱᴇᴛᴛɪɴɢꜱ."""    
 
-    PAGE_TXT = """ᴡʜʏ ᴀʀᴇ ʏᴏᴜ ꜱᴏ ᴄᴜʀɪᴏᴜꜱ ⁉️"""    
+    PAGE_TXT = """Haha, I like that energy! 😄"""    
    
     SOURCE_TXT = """<b>ՏOᑌᖇᑕᗴ ᑕOᗪᗴ :</b> 👇\nThis Is An Open-Source Project. You Can Use It Freely, But Selling The Source Code Is Strictly Prohibited."""
