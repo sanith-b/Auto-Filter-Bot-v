@@ -1599,7 +1599,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     
     elif query.data == "me":
         buttons = [[
-            InlineKeyboardButton ('🎁 sᴏᴜʀᴄᴇ', callback_data='source'),
+            InlineKeyboardButton ('🌟 Features', url='https://featureskbot.vercel.app/'),
         ],[
             InlineKeyboardButton('🏠 Back to Home', callback_data='start')
         ]]
