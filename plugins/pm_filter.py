@@ -9,7 +9,7 @@ lock = asyncio.Lock()
 from database.users_chats_db import db
 from database.refer import referdb
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
-from Script import scriptAA
+from Script import script
 import pyrogram
 from info import *
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto, WebAppInfo
