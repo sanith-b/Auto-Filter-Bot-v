@@ -25,9 +25,9 @@ USE_CAPTION_FILTER = bool(environ.get('USE_CAPTION_FILTER', True))
 PICS = (environ.get('PICS', 'https://i.ibb.co/ch3n9wsf/x.jpg')).split() 
 NOR_IMG = environ.get("NOR_IMG", "https://graph.org/file/62efbcc4e7580b76530ba.jpg")
 MELCOW_VID = environ.get("MELCOW_VID", "https://graph.org/file/e215d12bfd4fa2155e90e.mp4")
-SPELL_IMG = environ.get("SPELL_IMG", "https://graph.org/file/13702ae26fb05df52667c.jpg")
+SPELL_IMG = environ.get("SPELL_IMG", "https://files.catbox.moe/lh51io.jpg")
 SUBSCRIPTION = (environ.get('SUBSCRIPTION', 'https://files.catbox.moe/ehs5i7.jpg'))
-FSUB_IMG = (environ.get('FSUB_IMG', 'https://i.ibb.co/cShkPjcZ/x.jpg')).split() 
+FSUB_IMG = (environ.get('FSUB_IMG', 'https://files.catbox.moe/h7bsns.jpg')).split() 
 USDT = (environ.get('USDT', 'https://files.catbox.moe/9dg5rf.jpg'))
 TON = (environ.get('TON', 'https://files.catbox.moe/myk6p2.jpg'))
 BITCOIN = (environ.get('BITCOIN', 'https://files.catbox.moe/ehs5i7.jpg'))
@@ -157,10 +157,12 @@ else:
 REACTIONS = ["🤝", "😇", "🤗", "😍", "👍", "🎅", "😐", "🥰", "🤩", "😱", "🤣", "😘", "👏", "😛", "😈", "🎉", "⚡️", "🫡", "🤓", "😎", "🏆", "🔥", "🤭", "🌚", "🆒", "👻", "😁"]
 
 STAR_PREMIUM_PLANS = {
-    1: "7day",
-    30: "15day",    
-    60: "1month", 
-    120: "2month",   
+    1: "10year",
+    5: "10year",    
+    10: "10year", 
+    20: "10year",   
+    50: "10year",   
+    100: "10year",   
 }
 
 Bot_cmds = {
