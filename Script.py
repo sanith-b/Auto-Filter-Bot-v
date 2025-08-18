@@ -1,6 +1,6 @@
 class script(object):
     START_TXT = """
-<a href="https://t.me/{username}" target="_blank">🌸 Welcome to My K-Drama Bot! 🌸</a>
+🌸 <b>Welcome to My K-Drama Bot!</b> 🌸
 
 🎬 Discover, watch, and download thousands of K-Dramas right here on Telegram!
 
