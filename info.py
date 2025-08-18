@@ -28,6 +28,12 @@ MELCOW_VID = environ.get("MELCOW_VID", "https://graph.org/file/e215d12bfd4fa2155
 SPELL_IMG = environ.get("SPELL_IMG", "https://graph.org/file/13702ae26fb05df52667c.jpg")
 SUBSCRIPTION = (environ.get('SUBSCRIPTION', 'https://files.catbox.moe/ehs5i7.jpg'))
 FSUB_IMG = (environ.get('FSUB_IMG', 'https://i.ibb.co/cShkPjcZ/x.jpg')).split() 
+USDT = (environ.get('USDT', 'https://files.catbox.moe/9dg5rf.jpg'))
+TON = (environ.get('TON', 'https://files.catbox.moe/myk6p2.jpg'))
+BITCOIN = (environ.get('BITCOIN', 'https://files.catbox.moe/ehs5i7.jpg'))
+USDTQR = (environ.get('USDTQR', 'https://files.catbox.moe/yyepjk.jpg'))
+TONQR = (environ.get('TONQR', 'https://files.catbox.moe/nzx7g3.jpg'))
+TONQR = (environ.get('BITCOINQR', 'https://files.catbox.moe/wqfh2c.jpg'))
 
 ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '').split()] 
 CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '-100').split()]
