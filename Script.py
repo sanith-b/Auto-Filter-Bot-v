@@ -218,7 +218,7 @@ Nᴀᴍᴇ - {}
 ▪️Network - <code>BSC (BEP20)</code>
 ▪️Address - <code>0xDC432295B69c9DC3c83D22BEbb048446E27e2598</code>
     """
-    SANQR_TEXT = """
+    SCANQR_TEXT = """
 Scan QR Code
     """
     
