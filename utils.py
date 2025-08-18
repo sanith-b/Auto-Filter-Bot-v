@@ -692,7 +692,7 @@ async def group_setting_buttons(grp_id):
     settings = await get_settings(grp_id)
     buttons = [[
                 InlineKeyboardButton('📄 Result Page', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
-                InlineKeyboardButton('⏺️ Button' if settings.get("button") else '💬 Text ', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
+                InlineKeyboardButton('Button' if settings.get("button") else 'Text ', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
             ],[
                 InlineKeyboardButton('📁 File Secure', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',),
                 InlineKeyboardButton('✅ Enable' if settings["file_secure"] else '❌ Disable', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',),
@@ -709,11 +709,9 @@ async def group_setting_buttons(grp_id):
                 InlineKeyboardButton('🔘 Max Button', callback_data=f'setgs#max_btn#{settings["max_btn"]}#{grp_id}',),
                 InlineKeyboardButton('10' if settings["max_btn"] else f'{MAX_B_TN}', callback_data=f'setgs#max_btn#{settings["max_btn"]}#{grp_id}',),
             ],[
-                InlineKeyboardButton('ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ᴍᴏᴅᴇ', callback_data=f'verification_setgs#{grp_id}',),
+                InlineKeyboardButton('📜 Log Channel', callback_data=f'log_setgs#{grp_id}',),
+                InlineKeyboardButton('📝 Add Caption', callback_data=f'caption_setgs#{grp_id}',),   
             ],[
-                InlineKeyboardButton('ʟᴏɢ ᴄʜᴀɴɴᴇʟ', callback_data=f'log_setgs#{grp_id}',),
-                InlineKeyboardButton('ꜱᴇᴛ ᴄᴀᴘᴛɪᴏɴ', callback_data=f'caption_setgs#{grp_id}',),   
-            ],[
-                InlineKeyboardButton('⇋ ᴄʟᴏꜱᴇ ꜱᴇᴛᴛɪɴɢꜱ ᴍᴇɴᴜ ⇋', callback_data='close_data')
+                InlineKeyboardButton('🔒 Exit Settings', callback_data='close_data')
     ]]
     return buttons
