@@ -1421,9 +1421,9 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif query.data == "upi":
         try:
             btn = [[ 
-                InlineKeyboardButton('USDT 	₿', callback_data='usdt'),
+                InlineKeyboardButton('USDT ₮', callback_data='usdt'),
                 InlineKeyboardButton('TON ⛛', callback_data='ton'),
-                InlineKeyboardButton('BITCOIN  ₿', callback_data='bitcoin'),
+                InlineKeyboardButton('BITCOIN ₿', callback_data='bitcoin'),
             ],[
                 InlineKeyboardButton('⬅️ Back', callback_data='buy')
             ]]
