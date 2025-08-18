@@ -20,6 +20,14 @@ Tap <b>Help</b> for assistance and guidance
     FEATURES_TXT = """<b>ʜᴇʀᴇ ɪꜱ ᴀʟʟ ᴍʏ ꜰᴜɴᴛɪᴏɴꜱ.</b>"""
 
     GHELP = """
+👥User Commands
+
+▶️ /start – Start bot
+🔥 /trendlist – Top searches
+💰 /plan – Donate Us
+🎬 /movie_update – Movie updates ON/OFF
+🎥 /imdb – Get IMDb info 
+
 👥 Group Commands 
 
 ⚙️ /settings – Manage group  
@@ -31,13 +39,9 @@ Tap <b>Help</b> for assistance and guidance
     """
     IHELP = """
 ▶️ /start – Start bot
-
 🔥 /trendlist – Top searches
-
 💰 /plan – Donate Us
-
 🎬 /movie_update – Movie updates ON/OFF
-
 🎥 /imdb – Get IMDb info  
 
     """
@@ -212,7 +216,24 @@ It may not be released or added to our database</i></b> ❌
     MELCOW_ENG = """👋 Hey {},   \n🍁 Welcome to 🌟 {}!   \n\n🔍 Search your favorite movies or series by typing the name 🔎   \n\n⚠️ Having trouble downloading or need help? Message us here 👇 </b>"""
     
     DISCLAIMER_TXT = """
-<b>Help menu!"""
+<b>Help menu!</b>
+
+👥User Commands
+
+▶️ /start – Start bot
+🔥 /trendlist – Top searches
+💰 /plan – Donate Us
+🎬 /movie_update – Movie updates ON/OFF
+🎥 /imdb – Get IMDb info 
+
+👥 Group Commands 
+
+⚙️ /settings – Manage group  
+📝 /set_log_channel – Set log  
+📢 /set_fsub – Force sub  
+❌ /remove_fsub – Remove fsub  
+🔄 /reset_group – Reset  
+👀 /details – Check settings"""
 
     PREMIUM_TEXT = """🌸 S<b>upport My K-Drama Bot!</b> 🌸
 
