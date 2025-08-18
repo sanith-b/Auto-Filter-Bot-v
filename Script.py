@@ -1,6 +1,21 @@
 class script(object):
-    START_TXT = """<b>​​​ʜɪɪ {} 👋, 
-ɪ ᴀᴍ ᴛʜᴇ ᴍᴏꜱᴛ ᴘᴏᴡᴇʀꜰᴜʟʟ ᴍᴇᴅɪᴀ ᴘʀᴏᴠɪᴅᴇʀ ʙᴏᴛ. ɪ ᴄᴀɴ ᴘʀᴏᴠɪᴅᴇᴅ ᴀʟʟ ʟᴀᴛᴇꜱᴛ ᴍᴏᴠɪᴇꜱ ᴏʀ ꜱᴇʀɪᴇꜱ. ᴊᴜꜱᴛ ꜱᴇɴᴅ ᴍᴇ ᴛʜᴇ ᴄᴏʀʀᴇᴄᴛ ɴᴀᴍᴇ .</b>"""
+    START_TXT = """
+<a href="https://t.me/{username}" target="_blank">🌸 Welcome to My K-Drama Bot! 🌸</a>
+
+🎬 Discover, watch, and download thousands of K-Dramas right here on Telegram!
+
+✨ Features you’ll love:
+
+🔍 <b>Smart Search & Trending</b> – Find dramas instantly and see what’s hot.
+📥 <b>Easy Downloads & Episode Management</b> – Save episodes to watch anytime.
+👥 <b>Group Support & Sharing</b> – Use the bot in groups to share dramas with friends.
+⏰ <b>24/7 Availability</b> – Your K-Drama companion is always online.
+
+💌 Get started now:
+
+Tap <b>Help</b> for assistance and guidance
+
+🌟 Your ultimate K-Drama companion is here! Enjoy!"""
 
     FEATURES_TXT = """<b>ʜᴇʀᴇ ɪꜱ ᴀʟʟ ᴍʏ ꜰᴜɴᴛɪᴏɴꜱ.</b>"""
 
@@ -70,16 +85,14 @@ Experience K-Drama like never before, all in <b>one seamless, fun, and easy-to-u
 │
 <b>╰─────────────────────⍟</b>"""
 
-    EARN_INFO = """<h1>📬 Contact @myKdrama_bot</h1>
-  <p>If you want to reach the bot team anonymously, here are the safest options:</p>
-  
-  <ul>
-    <li>💬 <strong>Telegram (Anonymous)</strong><br>
-      Use a secondary Telegram account to contact:<br>
-      Bot: <a href="https://t.me/myKdrama_bot" target="_blank">@myKdrama_bot</a><br>
+    EARN_INFO = """<b>📬 Contact @myKdrama_bot</b>
+If you want to reach the bot team anonymously, here are the safest options:
+
+💬 <strong>Telegram (Anonymous)</strong>
+      Use a secondary Telegram account to contact:
+      Bot: <a href="https://t.me/myKdrama_bot" target="_blank">@myKdrama_bot</a>
       Developer/Admin: <a href="https://t.me/SupMyKDramaBot" target="_blank">@admin</a>
-    </li>
-  </ul>"""    
+"""    
    
     
     VERIFICATION_TEXT = """<b><i>👋 ʜᴇʏ {},
