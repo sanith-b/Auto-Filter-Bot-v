@@ -201,7 +201,27 @@ Nᴀᴍᴇ - {}
 
 ꜱᴇʟᴇᴄᴛ ʏᴏᴜʀ ᴅᴇꜱɪʀᴇᴅ ᴀᴍᴏᴜɴᴛ ᴀɴᴅ ᴘᴜʀᴄʜᴀꜱᴇ ᴀ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ 👇.</b>
 """
+    USDT_TEXT = """
+▪️Coin - <code>USDT<?code>
+▪️Network - <code>TRX (TRC20)</code>
 
+▪️Address - <code>rNRyjPaHonNcMjt7fM1UGG8gfxaD8AtZ6L</code>
+    """
+    TON_TEXT = """
+▪️Coin - <code>TON</code>
+▪️Network  - <code>TON</code>
+▪️Memo - <code>157072592</code>
+▪️Address - <code>EQD5mxRgCuRNLxKxeOjG6r14iSroLF5FtomPnet-sgP5xNJb</code>
+    """
+    BITCOIN_TEXT = """
+▪️Coin - <code>BTC (Bitcoin)</code>
+▪️Network - <code>BSC (BEP20)</code>
+▪️Address - <code>0xDC432295B69c9DC3c83D22BEbb048446E27e2598</code>
+    """
+    SANQR_TEXT = """
+Scan QR Code
+    """
+    
     PREMIUM_UPI_TEXT = """<b><blockquote>ᴘᴀʏᴍᴇɴᴛ ᴍᴇᴛʜᴏᴅ: ᴜᴘɪ</blockquote>
 
 ʏᴏᴜ ᴄᴀɴ ᴘᴜʀᴄʜᴀꜱᴇ ᴘʀᴇᴍɪᴜᴍ ᴛʜʀᴏᴜɢʜ ᴜᴘɪ , ɴᴇᴛ ʙᴀɴᴋɪɴɢ.
