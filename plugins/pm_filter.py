@@ -1421,9 +1421,9 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif query.data == "upi":
         try:
             btn = [[ 
-                InlineKeyboardButton('USDT ₮', callback_data='usdt'),
-                InlineKeyboardButton('TON ⛛', callback_data='ton'),
-                InlineKeyboardButton('BITCOIN ₿', callback_data='bitcoin'),
+                InlineKeyboardButton('USDT ₮', callback_data='buy'),
+                InlineKeyboardButton('TON ⛛', callback_data='buy'),
+                InlineKeyboardButton('BITCOIN ₿', callback_data='buy'),
             ],[
                 InlineKeyboardButton('⬅️ Back', callback_data='buy')
             ]]
@@ -1441,125 +1441,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
         except Exception as e:
             LOGGER.error(e)
 
-    elif query.data == "usdt":
-        try:
-            btn = [[ 
-                InlineKeyboardButton('📲 Scan QR Code', callback_data='usdtqr')
-            ],[
-                InlineKeyboardButton('⬅️ Back', callback_data='upi')
-            ]]
-            reply_markup = InlineKeyboardMarkup(btn)
-            await client.edit_message_media(
-                query.message.chat.id, 
-                query.message.id, 
-                InputMediaPhoto(USDT)
-	        ) 
-            await query.message.edit_text(
-                text=script.USDT_TEXT.format(query.from_user.mention),
-                reply_markup=reply_markup,
-                parse_mode=enums.ParseMode.HTML
-            ) 
-        except Exception as e:
-            LOGGER.error(e)
-
-    elif query.data == "ton":
-        try:
-            btn = [[ 
-                InlineKeyboardButton('📲 Scan QR Code', callback_data='tonqr'),
-            ],[
-                InlineKeyboardButton('⬅️ Back', callback_data='upi')
-            ]]
-            reply_markup = InlineKeyboardMarkup(btn)
-            await client.edit_message_media(
-                query.message.chat.id, 
-                query.message.id, 
-                InputMediaPhoto(TON)
-	        ) 
-            await query.message.edit_text(
-                text=script.TON_TEXT.format(query.from_user.mention),
-                reply_markup=reply_markup,
-                parse_mode=enums.ParseMode.HTML
-            ) 
-        except Exception as e:
-            LOGGER.error(e)
-
-    elif query.data == "bitcoin":
-        try:
-            btn = [[ 
-                InlineKeyboardButton('📲 Scan QR Code', callback_data='bitcoinqr')
-            ],[
-                InlineKeyboardButton('⬅️ Back', callback_data='upi')
-            ]]
-            reply_markup = InlineKeyboardMarkup(btn)
-            await client.edit_message_media(
-                query.message.chat.id, 
-                query.message.id, 
-                InputMediaPhoto(BITCOIN)
-	        ) 
-            await query.message.edit_text(
-                text=script.BITCOIN_TEXT.format(query.from_user.mention),
-                reply_markup=reply_markup,
-                parse_mode=enums.ParseMode.HTML
-            ) 
-        except Exception as e:
-            LOGGER.error(e)
-
-    elif query.data == "usdtqr":
-        try:
-            btn = [[
-                InlineKeyboardButton('⬅️ Back', callback_data='usdt')
-            ]]
-            reply_markup = InlineKeyboardMarkup(btn)
-            await client.edit_message_media(
-                query.message.chat.id, 
-                query.message.id, 
-                InputMediaPhoto(USDTQR)
-	        ) 
-            await query.message.edit_text(
-                text=script.SCANQR_TEXT.format(query.from_user.mention),
-                reply_markup=reply_markup,
-                parse_mode=enums.ParseMode.HTML
-            ) 
-        except Exception as e:
-            LOGGER.error(e)
-
-    elif query.data == "tonqr":
-        try:
-            btn = [[
-                InlineKeyboardButton('⬅️ Back', callback_data='ton')
-            ]]
-            reply_markup = InlineKeyboardMarkup(btn)
-            await client.edit_message_media(
-                query.message.chat.id, 
-                query.message.id, 
-                InputMediaPhoto(TONQR)
-	        ) 
-            await query.message.edit_text(
-                text=script.SCANQR_TEXT.format(query.from_user.mention),
-                reply_markup=reply_markup,
-                parse_mode=enums.ParseMode.HTML
-            ) 
-        except Exception as e:
-            LOGGER.error(e)
-
-    elif query.data == "bitcoinqr":
-        try:
-            btn = [[
-                InlineKeyboardButton('⬅️ Back', callback_data='bitcoin')
-            ]]
-            reply_markup = InlineKeyboardMarkup(btn)
-            await client.edit_message_media(
-                query.message.chat.id, 
-                query.message.id, 
-                InputMediaPhoto(BITCOINQR)
-	        ) 
-            await query.message.edit_text(
-                text=script.SCANQR_TEXT.format(query.from_user.mention),
-                reply_markup=reply_markup,
-                parse_mode=enums.ParseMode.HTML
-            ) 
-        except Exception as e:
-            LOGGER.error(e)
 
     elif query.data == "star":
         try:
