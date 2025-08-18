@@ -1617,11 +1617,36 @@ async def cb_handler(client: Client, query: CallbackQuery):
     
     elif query.data == "disclaimer":
             btn = [[
-                    InlineKeyboardButton("⬅️ Back", callback_data="start")
+				    InlineKeyboardButton('👤 User Commands', callback_data='ihelp'),
+                    InlineKeyboardButton('🏘 Group Commands', callback_data='ghelp'),
+			       ],[
+                    InlineKeyboardButton("⬅️ Back", callback_data="start"),
                   ]]
             reply_markup = InlineKeyboardMarkup(btn)
             await query.message.edit_text(
                 text=(script.DISCLAIMER_TXT),
+                reply_markup=reply_markup,
+                parse_mode=enums.ParseMode.HTML 
+            )
+    elif query.data == "ihelp":
+            btn = [[
+                    InlineKeyboardButton("⬅️ Back", callback_data="disclaimer"),
+				    InlineKeyboardButton('🏠 Back to Home', callback_data='start')
+			]]
+            reply_markup = InlineKeyboardMarkup(btn)
+            await query.message.edit_text(
+                text=(script.IHELP_TXT),
+                reply_markup=reply_markup,
+                parse_mode=enums.ParseMode.HTML 
+            )
+    elif query.data == "dghelp":
+            btn = [[
+                    InlineKeyboardButton("⬅️ Back", callback_data="disclaimer"),
+				    InlineKeyboardButton('🏠 Back to Home', callback_data='start')
+			]]
+            reply_markup = InlineKeyboardMarkup(btn)
+            await query.message.edit_text(
+                text=(script.GHELP_TXT),
                 reply_markup=reply_markup,
                 parse_mode=enums.ParseMode.HTML 
             )
