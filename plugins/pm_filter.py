@@ -109,7 +109,7 @@ async def refercall(bot, query):
     await bot.edit_message_media(
             query.message.chat.id, 
             query.message.id, 
-            InputMediaPhoto("https://graph.org/file/1a2e64aee3d4d10edd930.jpg")
+            InputMediaPhoto("https://files.catbox.moe/nqvowv.jpg")
         )
     await query.message.edit_text(
         text=f'🎉 Your Referral Link: \n🔗 https://t.me/{bot.me.username}?start=reff_{query.from_user.id} \n\n👥 Share with friends!',
