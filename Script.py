@@ -3,13 +3,7 @@ class script(object):
 🌸 <b>Welcome to My K-Drama Bot!</b> 🌸
 
 🎬 Discover, watch, and download thousands of K-Dramas right here on Telegram!
-
-✨ Features you’ll love:
-
-🔍 <b>Smart Search & Trending</b> – Find dramas instantly and see what’s hot.
-📥 <b>Easy Downloads & Episode Management</b> – Save episodes to watch anytime.
-👥 <b>Group Support & Sharing</b> – Use the bot in groups to share dramas with friends.
-⏰ <b>24/7 Availability</b> – Your K-Drama companion is always online.
+✏️ <b>To find your favorite K-Drama, simply send me the drama name here in private chat.</b>
 
 💌 Get started now:
 
