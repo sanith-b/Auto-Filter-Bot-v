@@ -1615,42 +1615,69 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await query.answer(f'You Have: {referdb.get_refer_points(query.from_user.id)} Refferal points.', show_alert=True)
     
     
+
     elif query.data == "disclaimer":
+        try:
             btn = [[
 				    InlineKeyboardButton('👤 User Commands', callback_data='ihelp'),
                     InlineKeyboardButton('🏘 Group Commands', callback_data='ghelp'),
 			       ],[
                     InlineKeyboardButton("⬅️ Back", callback_data="start"),
                   ]]
-            reply_markup = InlineKeyboardMarkup(btn)
-            await query.message.edit_text(
-                text=(script.DISCLAIMER_TXT),
-                reply_markup=reply_markup,
-                parse_mode=enums.ParseMode.HTML 
+            reply_markup = InlineKeyboardMarkup(btn)                        
+            await client.edit_message_media(                
+                query.message.chat.id, 
+                query.message.id, 
+                InputMediaPhoto(random.choice(PICS))                       
             )
-    elif query.data == "ihelp":
-            btn = [[
-                    InlineKeyboardButton("⬅️ Back", callback_data="disclaimer"),
-				    InlineKeyboardButton('🏠 Back to Home', callback_data='start')
-			]]
-            reply_markup = InlineKeyboardMarkup(btn)
             await query.message.edit_text(
-                text=(script.IHELP_TXT),
+                text=script.DISCLAIMER_TXT,
                 reply_markup=reply_markup,
-                parse_mode=enums.ParseMode.HTML 
+                parse_mode=enums.ParseMode.HTML
             )
-    elif query.data == "dghelp":
-            btn = [[
-                    InlineKeyboardButton("⬅️ Back", callback_data="disclaimer"),
-				    InlineKeyboardButton('🏠 Back to Home', callback_data='start')
-			]]
-            reply_markup = InlineKeyboardMarkup(btn)
-            await query.message.edit_text(
-                text=(script.GHELP_TXT),
-                reply_markup=reply_markup,
-                parse_mode=enums.ParseMode.HTML 
-            )
+        except Exception as e:
+            LOGGER.error(e)
 
+    elif query.data == "ihelp":
+        try:
+            btn = [[
+                    InlineKeyboardButton("⬅️ Back", callback_data="disclaimer"),
+				    InlineKeyboardButton('🏠 Back to Home', callback_data='start')
+			]]
+            reply_markup = InlineKeyboardMarkup(btn)
+            await client.edit_message_media(
+                query.message.chat.id, 
+                query.message.id, 
+                InputMediaPhoto(random.choice(PICS))
+	        ) 
+            await query.message.edit_text(
+                text=script.IHELP_TXT.format(query.from_user.mention),
+                reply_markup=reply_markup,
+                parse_mode=enums.ParseMode.HTML
+            ) 
+        except Exception as e:
+            LOGGER.error(e)
+
+    elif query.data == "dghelp":
+        try:
+            btn = [[
+                    InlineKeyboardButton("⬅️ Back", callback_data="disclaimer"),
+				    InlineKeyboardButton('🏠 Back to Home', callback_data='start')
+			]]
+            reply_markup = InlineKeyboardMarkup(btn)
+            await client.edit_message_media(
+                query.message.chat.id, 
+                query.message.id, 
+                InputMediaPhoto(random.choice(PICS))
+	        ) 
+            await query.message.edit_text(
+                text=script.GHELP_TXT.format(query.from_user.mention),
+                reply_markup=reply_markup,
+                parse_mode=enums.ParseMode.HTML
+            ) 
+        except Exception as e:
+            LOGGER.error(e)
+	
     elif query.data.startswith("grp_pm"):
         _, grp_id = query.data.split("#")
         user_id = query.from_user.id if query.from_user else None
