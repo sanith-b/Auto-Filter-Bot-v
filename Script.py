@@ -70,19 +70,16 @@ Experience K-Drama like never before, all in <b>one seamless, fun, and easy-to-u
 │
 <b>╰─────────────────────⍟</b>"""
 
-    EARN_INFO = """<b><i><blockquote>💸 ʜᴏᴡ ᴛᴏ ᴇᴀʀɴ ᴍᴏɴᴇʏ ʙʏ ᴛʜɪs ʙᴏᴛ - </blockquote>
-
-1:- ʏᴏᴜ ᴍᴜꜱᴛ ʜᴀᴠᴇ ᴀᴛʟᴇᴀꜱᴛ ᴏɴᴇ ɢʀᴏᴜᴘ ᴡɪᴛʜ ᴍɪɴɪᴍᴜᴍ 100 ᴍᴇᴍʙᴇʀꜱ.
-
-2:- ᴍᴀᴋᴇ <a href=https://t.me/{}</a> ᴀᴅᴍɪɴ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ.
-
-3:- ᴄʀᴇᴀᴛᴇ ᴀᴄᴄᴏᴜɴᴛ ᴏɴ ᴀɴʏ sʜᴏʀᴛɴᴇʀ ʟɪᴋᴇ ʏᴏᴜ ᴄᴀɴ ᴀʟsᴏ ᴜsᴇ ᴛʜɪs ʙᴇsᴛ sʜᴏʀᴛɴᴇʀ <a href=https://zipshort.net/ref/noyanbanerjee>ᴢɪᴘꜱʜᴏʀᴛ</a>.
-
-4:- ᴛʜᴇɴ ꜱᴇɴᴅ /settings ᴄᴏᴍᴍᴀᴅ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ ᴀɴᴅ ᴇᴅɪᴛ ꜱᴇᴛᴛɪɴɢꜱ ᴀꜱ ʏᴏᴜʀ ᴡɪꜱᴇ
-
-ʏᴏᴜ ᴄᴀɴ ᴄʜᴇᴄᴋ ʏᴏᴜʀ ᴀʟʟ ᴅᴇᴛᴀɪʟs ʙʏ /details ᴄᴏᴍᴍᴀɴᴅ
-
-💯 ɴᴏᴛᴇ - ᴛʜɪs ʙᴏᴛ ɪs ꜰʀᴇᴇ ᴛᴏ ᴀʟʟ, ʏᴏᴜ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ʙᴏᴛ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘs ᴀɴᴅ ᴇᴀʀɴ ᴜɴʟɪᴍɪᴛᴇᴅ ᴍᴏɴᴇʏ.</i></b>"""    
+    EARN_INFO = """<h1>📬 Contact @myKdrama_bot</h1>
+  <p>If you want to reach the bot team anonymously, here are the safest options:</p>
+  
+  <ul>
+    <li>💬 <strong>Telegram (Anonymous)</strong><br>
+      Use a secondary Telegram account to contact:<br>
+      Bot: <a href="https://t.me/myKdrama_bot" target="_blank">@myKdrama_bot</a><br>
+      Developer/Admin: <a href="https://t.me/SupMyKDramaBot" target="_blank">@admin</a>
+    </li>
+  </ul>"""    
    
     
     VERIFICATION_TEXT = """<b><i>👋 ʜᴇʏ {},
