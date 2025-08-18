@@ -179,12 +179,12 @@ Iᴅ - <code>{}</code>
 Nᴀᴍᴇ - {}
 """
 
-    ALRT_TXT = """Hello {user},  
+    ALRT_TXT = """Hello {},  
 This is not your movie request.  
 Please request your own 🎬
 """
 
-    OLD_ALRT_TXT = """Hey {user},  
+    OLD_ALRT_TXT = """Hey {},  
 You're using one of my old messages ⚠️  
 Please send your request again ✉️
 """
