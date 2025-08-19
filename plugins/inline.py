@@ -7,7 +7,7 @@ from utils import is_subscribed, get_size, temp
 from info import CACHE_TIME, AUTH_USERS
 
 CAPTION = """<b>Uploaded By: <a herf="https://t.me/myKdrama_bot">My K-Drama Bot</a></b>"""
-auth_channel = environ.get('AUTH_CHANNEL', "-1001271383721")
+auth_channel = environ.get('-1001271383721')
 AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
 
 
