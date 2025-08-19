@@ -4,9 +4,11 @@ from pyrogram.errors.exceptions.bad_request_400 import QueryIdInvalid
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultCachedDocument, InlineQuery
 from database.ia_filterdb import get_search_results
 from utils import is_subscribed, get_size, temp
-from info import CACHE_TIME, AUTH_USERS, AUTH_CHANNEL
+from info import CACHE_TIME, AUTH_USERS
 
 CAPTION = """<b>Uploaded By: <a herf="https://t.me/myKdrama_bot">My K-Drama Bot</a></b>"""
+auth_channel = environ.get('AUTH_CHANNEL', "-1001271383721")
+AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
 
 
 logger = logging.getLogger(__name__)
