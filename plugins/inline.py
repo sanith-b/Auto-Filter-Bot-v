@@ -5,7 +5,9 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InlineQue
 from database.ia_filterdb import get_search_results
 from utils import is_subscribed, get_size, temp
 from info import CACHE_TIME, AUTH_USERS, AUTH_CHANNEL
-from script import CAPTION
+
+CAPTION = """<b>Uploaded By: <a herf="https://t.me/myKdrama_bot">My K-Drama Bot</a></b>"""
+
 
 logger = logging.getLogger(__name__)
 cache_time = 0 if AUTH_USERS or AUTH_CHANNEL else CACHE_TIME
