@@ -49,6 +49,8 @@ support_chat_id = environ.get('SUPPORT_CHAT_ID', '-1003088011737')
 SUPPORT_CHAT_ID = int(support_chat_id) if support_chat_id and id_pattern.search(support_chat_id) else None
 auth_users = [int(user) if id_pattern.search(user) else user for user in environ.get('AUTH_USERS', '').split()]
 AUTH_USERS = (auth_users + ADMINS) if auth_users else []
+au_channel = environ.get('AU_CHANNEL', '-1001271383721')
+AU_CHANNEL = int(au_channel) if au_channel and id_pattern.search(au_channel) else None
 
 DATABASE_URI = environ.get('DATABASE_URI', "")
 DATABASE_NAME = environ.get('DATABASE_NAME', "Cluster0")
