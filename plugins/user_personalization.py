@@ -2,7 +2,7 @@
 import os
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from database.ia_filterdb import db_users, db_dramas  # Using your existing database collections
+from database.ia_filterdb import *
 import random
 
 # =========================
