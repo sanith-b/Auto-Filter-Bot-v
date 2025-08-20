@@ -2,7 +2,7 @@
 
 from pyrogram import filters
 from pyrogram.types import Message
-from .. import app  # Import your bot instance
+from pyrogram import Client, filters
 
 # Private channel ID for forwarding drama requests
 PRIVATE_CHANNEL_ID = "-1003028947753"
