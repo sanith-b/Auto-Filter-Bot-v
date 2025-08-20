@@ -1,7 +1,7 @@
 import requests
 import datetime
-from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from bot import SilentX
 
 TMDB_API_KEY = "90dde61a7cf8339a2cff5d805d5597a9"
 
