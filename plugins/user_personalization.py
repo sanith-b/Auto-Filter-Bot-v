@@ -4,6 +4,7 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from database.ia_filterdb import *
 import random
+from pyrogram import Client, filters
 
 # =========================
 # Load all dramas from database
