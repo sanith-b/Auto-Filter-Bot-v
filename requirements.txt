@@ -29,4 +29,3 @@ jinja2
 fuzzywuzzy
 python-Levenshtein==0.21.0 
 flask
-apscheduler==3.10.5
