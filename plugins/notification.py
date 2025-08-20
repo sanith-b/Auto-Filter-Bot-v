@@ -1,72 +1,53 @@
-import asyncio
-from pyrogram import Client
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pymongo import MongoClient
-import datetime
 
 # MongoDB setup
 MONGO_URI = "mongodb+srv://botadmin:1sQZEOQ7y3SSPNV3@kdramabot.00xhgvx.mongodb.net/?retryWrites=true&w=majority&appName=kdramabot"
 client_db = MongoClient(MONGO_URI)
 db = client_db['kdramabot']
-subscriptions_collection = db['subscriptions']
+favorites_collection = db['favorites']
 
-# TMDB API Key
-TMDB_API_KEY = "90dde61a7cf8339a2cff5d805d5597a9"
+# Pyrogram Client
+app = Client("kdrama_bot")
 
-# Pyrogram Client setup
+# Callback Handler for Favorites
+@app.on_callback_query(filters.regex(r"^favorite_"))
+async def favorite_drama(client, query):
+    drama_id = query.data.split("_")[1]
+    user_id = query.from_user.id
+    drama_title = "Unknown Title"
+    drama_type = "Unknown"
 
-# Fetch upcoming K-Dramas from TMDB
-def get_coming_soon():
-    import requests
-    today = datetime.date.today().strftime("%Y-%m-%d")
-    url = (
-        f"https://api.themoviedb.org/3/discover/tv"
-        f"?api_key={TMDB_API_KEY}"
-        f"&with_origin_country=KR"
-        f"&sort_by=first_air_date.asc"
-        f"&first_air_date.gte={today}"
-        f"&language=en-US&page=1"
+    # Replace with your function to get drama details
+    from comingsoon_kdrama import get_coming_soon
+    for drama in get_coming_soon():
+        if str(drama['id']) == drama_id:
+            drama_title = drama['title']
+            drama_type = drama.get('type', 'Unknown')
+            break
+
+    # Save to MongoDB
+    favorites_collection.update_one(
+        {"user_id": user_id},
+        {"$addToSet": {"dramas": {"id": drama_id, "title": drama_title, "type": drama_type}}},
+        upsert=True
     )
 
-    response = requests.get(url)
-    data = response.json()
+    await query.answer(f"❤️ Added {drama_title} ({drama_type}) to your Favorites!", show_alert=True)
 
-    dramas = []
-    for item in data.get("results", []):
-        drama = {
-            "id": item.get("id"),
-            "title": item.get("name"),
-            "type": "TV Series",
-            "release_date": item.get("first_air_date"),
-            "overview": item.get("overview", "No description available."),
-            "poster": f"https://image.tmdb.org/t/p/w500{item['poster_path']}" if item.get("poster_path") else None
-        }
-        dramas.append(drama)
-    return dramas
+# Command to View Favorites
+@app.on_message(filters.command("myfavorites"))
+async def my_favorites(client, message):
+    user_id = message.from_user.id
+    data = favorites_collection.find_one({"user_id": user_id})
 
-# Send Digest Function
-async def send_digest():
-    async with app:
-        for sub in subscriptions_collection.find({"enabled": True}):
-            chat_id = sub["chat_id"]
-            dramas = get_coming_soon()
+    if not data or not data.get("dramas"):
+        await message.reply_text("🌸 Your Favorites list is empty!")
+        return
 
-            for drama in dramas[:5]:
-                caption = (
-                    f"🎬 <b>{drama['title']}</b> ({drama['type']})\n"
-                    f"📅 Release Date: {drama['release_date']}\n\n"
-                    f"✨ {drama['overview']}"
-                )
-                await app.send_photo(
-                    chat_id=chat_id,
-                    photo=drama["poster"] if drama["poster"] else "https://i.ibb.co/6NfYQ7c/kdrama.jpg",
-                    caption=caption
-                )
+    msg = "💖 Your Favorites:\n\n"
+    for drama in data["dramas"]:
+        msg += f"🎬 {drama['title']} ({drama['type']})\n"
 
-# Scheduler
-scheduler = AsyncIOScheduler()
-scheduler.add_job(lambda: asyncio.run(send_digest()), 'cron', hour=9)  # Daily at 9 AM
-scheduler.add_job(lambda: asyncio.run(send_digest()), 'cron', day_of_week='mon', hour=9)  # Weekly on Monday
-scheduler.start()
-
-# Keep the bot running
+    await message.reply_text(msg)
