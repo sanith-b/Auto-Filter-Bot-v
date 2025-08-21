@@ -7,7 +7,6 @@ import requests
 import asyncio
 
 TMDB_API_KEY = "90dde61a7cf8339a2cff5d805d5597a9"
-BOT = Client.get_current()
 
 comingsoon_col = db.comingsoon  # Using your existing db instance
 
@@ -74,7 +73,7 @@ def format_drama_details(drama):
     return text
 
 # ---------------- COMMAND ----------------
-@BOT.on_message(filters.command("comingsoon"))
+@Client.on_message(filters.command("comingsoon"))
 async def comingsoon_command(client, message):
     fetch_upcoming_dramas()
     buttons = drama_buttons()
@@ -85,7 +84,7 @@ async def comingsoon_command(client, message):
     )
 
 # ---------------- CALLBACKS ----------------
-@BOT.on_callback_query()
+@Client.on_callback_query()
 async def callback_handler(client, callback_query):
     data = callback_query.data
     if data.startswith("drama:"):
