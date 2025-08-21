@@ -23,7 +23,6 @@ from PIL import Image
 import threading, time, requests
 from logging_helper import LOGGER
 
-
 botStartTime = time.time()
 ppath = "plugins/*.py"
 files = glob.glob(ppath)
@@ -95,8 +94,7 @@ async def SilentXBotz_start():
     bind_address = "0.0.0.0"
     await web.TCPSite(app, bind_address, PORT).start()
     await idle()
-
-
+    
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     try:
