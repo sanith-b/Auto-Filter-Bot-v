@@ -1,60 +1,65 @@
-# plugins/comingsoon.py
+import requests
+import datetime
+import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pymongo import MongoClient
-from datetime import datetime
-import requests
-import asyncio
 
 # ---------------- CONFIG ----------------
+TMDB_API_KEY = "90dde61a7cf8339a2cff5d805d5597a9"
 MONGO_URI = "mongodb+srv://botadmin:1sQZEOQ7y3SSPNV3@kdramabot.00xhgvx.mongodb.net/?retryWrites=true&w=majority&appName=kdramabot"
 DB_NAME = "kdramabot"
-TMDB_API_KEY = "90dde61a7cf8339a2cff5d805d5597a9"
 
 # ---------------- DATABASE ----------------
 client = MongoClient(MONGO_URI)
 db = client[DB_NAME]
 
-# Ensure collections exist
+# Automatic creation of collections
 comingsoon_col = db.get_collection("comingsoon")
 watchlist_col = db.get_collection("watchlist")
 subscriptions_col = db.get_collection("subscriptions")
 
 # ---------------- HELPERS ----------------
-def fetch_upcoming_dramas():
-    """Fetch upcoming dramas from TMDb and store in MongoDB."""
-    url = f"https://api.themoviedb.org/3/tv/upcoming?api_key={TMDB_API_KEY}&language=en-US&page=1"
+def fetch_coming_soon():
+    """Fetch upcoming K-Dramas from TMDb and store in MongoDB with cast, genres, trailer"""
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    url = (
+        f"https://api.themoviedb.org/3/discover/tv"
+        f"?api_key={TMDB_API_KEY}"
+        f"&with_origin_country=KR"
+        f"&sort_by=first_air_date.asc"
+        f"&first_air_date.gte={today}"
+        f"&language=en-US&page=1"
+    )
     res = requests.get(url).json()
-    for item in res.get('results', []):
-        drama_id = str(item['id'])
+    for item in res.get("results", []):
+        drama_id = str(item.get("id"))
 
-        # Top 5 cast
-        cast = []
-        credits_res = requests.get(f"https://api.themoviedb.org/3/tv/{drama_id}/credits?api_key={TMDB_API_KEY}").json()
-        cast = [c['name'] for c in credits_res.get('cast', [])[:5]]
+        # Fetch cast
+        cast_res = requests.get(f"https://api.themoviedb.org/3/tv/{drama_id}/credits?api_key={TMDB_API_KEY}").json()
+        cast = [c['name'] for c in cast_res.get('cast', [])[:5]]
 
-        # Genres mapping
-        genre_mapping = requests.get(f"https://api.themoviedb.org/3/genre/tv/list?api_key={TMDB_API_KEY}&language=en-US").json().get('genres', [])
-        genre_dict = {g['id']: g['name'] for g in genre_mapping}
+        # Fetch genres
+        genre_list = requests.get(f"https://api.themoviedb.org/3/genre/tv/list?api_key={TMDB_API_KEY}&language=en-US").json().get('genres', [])
+        genre_dict = {g['id']: g['name'] for g in genre_list}
         genres = [genre_dict.get(gid, str(gid)) for gid in item.get('genre_ids', [])]
 
-        # Trailer link
-        trailer = ''
-        videos_res = requests.get(f"https://api.themoviedb.org/3/tv/{drama_id}/videos?api_key={TMDB_API_KEY}&language=en-US").json()
-        for vid in videos_res.get('results', []):
-            if vid['type'] == 'Trailer' and vid['site'] == 'YouTube':
+        # Fetch trailer
+        trailer_res = requests.get(f"https://api.themoviedb.org/3/tv/{drama_id}/videos?api_key={TMDB_API_KEY}&language=en-US").json()
+        trailer = ""
+        for vid in trailer_res.get("results", []):
+            if vid.get("site") == "YouTube" and vid.get("type") == "Trailer":
                 trailer = f"https://youtu.be/{vid['key']}"
                 break
 
-        # Upsert drama
         comingsoon_col.update_one(
             {"_id": drama_id},
             {"$set": {
                 "_id": drama_id,
-                "title": item.get('name'),
-                "release_date": item.get('first_air_date', "2099-01-01"),
-                "overview": item.get('overview', ''),
-                "poster_path": item.get('poster_path', ''),
+                "title": item.get("name"),
+                "release_date": item.get("first_air_date"),
+                "overview": item.get("overview", "No description available."),
+                "poster": f"https://image.tmdb.org/t/p/w500{item['poster_path']}" if item.get("poster_path") else None,
                 "cast": cast,
                 "genre": genres,
                 "trailer": trailer
@@ -62,100 +67,90 @@ def fetch_upcoming_dramas():
             upsert=True
         )
 
-def drama_inline_buttons():
-    """Create inline buttons for upcoming dramas."""
+def drama_buttons(drama):
+    """Create inline buttons for each drama with watchlist and subscribe"""
     buttons = []
-    dramas = list(comingsoon_col.find().sort("release_date", 1).limit(10))
-    for drama in dramas:
-        buttons.append([InlineKeyboardButton(drama['title'], callback_data=f"drama:{drama['_id']}")])
-    return InlineKeyboardMarkup(buttons) if buttons else None
-
-def drama_detail_buttons(drama_id):
-    """Buttons for watchlist and notifications."""
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton("➕ Add to Watchlist", callback_data=f"watchlist:{drama_id}")],
-        [InlineKeyboardButton("🔔 Subscribe", callback_data=f"subscribe:{drama_id}")]
+    if drama.get("trailer"):
+        buttons.append([InlineKeyboardButton("▶️ Watch Trailer", url=drama["trailer"])])
+    buttons.append([
+        InlineKeyboardButton("➕ Add to Watchlist", callback_data=f"watchlist:{drama['_id']}"),
+        InlineKeyboardButton("🔔 Subscribe", callback_data=f"subscribe:{drama['_id']}")
     ])
+    return InlineKeyboardMarkup(buttons)
 
-def format_drama_details(drama):
-    release_date = datetime.strptime(drama['release_date'], "%Y-%m-%d")
-    days_left = (release_date - datetime.now()).days
-    poster_url = f"https://image.tmdb.org/t/p/w500{drama['poster_path']}" if drama.get('poster_path') else ''
-    text = f"🎬 <b>{drama['title']}</b>\n" \
-           f"📅 Release Date: {drama['release_date']} ({days_left} days left)\n" \
-           f"⭐ Genres: {', '.join(drama.get('genre', []))}\n" \
-           f"🎭 Cast: {', '.join(drama.get('cast', []))}\n" \
-           f"📝 Synopsis: {drama.get('overview','')[:300]}...\n"
-    if drama.get('trailer'):
-        text += f"▶️ Trailer: {drama['trailer']}\n"
-    if poster_url:
-        text += poster_url
-    return text
+def format_drama_caption(drama):
+    release_date = drama.get("release_date") or "TBA"
+    days_left = ""
+    if release_date != "TBA":
+        try:
+            rd = datetime.datetime.strptime(release_date, "%Y-%m-%d").date()
+            diff = (rd - datetime.date.today()).days
+            if diff >= 0:
+                days_left = f"\n⏳ {diff} days left!"
+        except:
+            pass
+    caption = (
+        f"🎬 <b>{drama['title']}</b>\n"
+        f"📅 Release Date: {release_date}{days_left}\n"
+        f"⭐ Genres: {', '.join(drama.get('genre', []))}\n"
+        f"🎭 Cast: {', '.join(drama.get('cast', []))}\n\n"
+        f"✨ {drama.get('overview')}"
+    )
+    return caption
 
 # ---------------- COMMAND ----------------
 @Client.on_message(filters.command("comingsoon"))
-async def comingsoon_command(client, message):
-    fetch_upcoming_dramas()
+async def comingsoon_handler(client, message):
+    fetch_coming_soon()
     await asyncio.sleep(1)  # allow DB to update
-    buttons = drama_inline_buttons()
+    dramas = list(comingsoon_col.find().sort("release_date", 1).limit(5))
 
-    if not buttons:
-        await message.reply_text("📺 No upcoming dramas found!")
+    if not dramas:
+        await message.reply_text("🌸 No upcoming K-Dramas found!")
         return
 
-    await message.reply_text(
-        "📺 <b>Upcoming K-Dramas:</b>\nClick a drama to see details.",
-        reply_markup=buttons,
-        disable_web_page_preview=True
-    )
+    for drama in dramas:
+        await message.reply_photo(
+            drama.get("poster") or "https://i.ibb.co/6NfYQ7c/kdrama.jpg",
+            caption=format_drama_caption(drama),
+            reply_markup=drama_buttons(drama)
+        )
 
 # ---------------- CALLBACKS ----------------
-@Client.on_callback_query()
-async def callback_handler(client, callback_query):
-    data = callback_query.data
-    user_id = callback_query.from_user.id
+@Client.on_callback_query(filters.regex(r"^watchlist:"))
+async def watchlist_callback(client, query):
+    drama_id = query.data.split(":")[1]
+    user_id = query.from_user.id
+    db.watchlist.update_one(
+        {"user_id": user_id, "drama_id": drama_id},
+        {"$set": {"user_id": user_id, "drama_id": drama_id}},
+        upsert=True
+    )
+    await query.answer("➕ Added to your watchlist!", show_alert=True)
 
-    # Show drama details
-    if data.startswith("drama:"):
-        drama_id = data.split(":")[1]
-        drama = comingsoon_col.find_one({"_id": drama_id})
-        if drama:
-            text = format_drama_details(drama)
-            buttons = drama_detail_buttons(drama_id)
-            await callback_query.message.edit_text(text, reply_markup=buttons, disable_web_page_preview=False)
-
-    # Add to watchlist
-    elif data.startswith("watchlist:"):
-        drama_id = data.split(":")[1]
-        watchlist_col.update_one(
-            {"user_id": user_id, "drama_id": drama_id},
-            {"$set": {"user_id": user_id, "drama_id": drama_id}},
-            upsert=True
-        )
-        await callback_query.answer("➕ Added to your watchlist!")
-
-    # Subscribe for notifications
-    elif data.startswith("subscribe:"):
-        drama_id = data.split(":")[1]
-        subscriptions_col.update_one(
-            {"user_id": user_id, "drama_id": drama_id},
-            {"$set": {"user_id": user_id, "drama_id": drama_id}},
-            upsert=True
-        )
-        await callback_query.answer("🔔 You are subscribed to release notifications!")
+@BOT.on_callback_query(filters.regex(r"^subscribe:"))
+async def subscribe_callback(client, query):
+    drama_id = query.data.split(":")[1]
+    user_id = query.from_user.id
+    db.subscriptions.update_one(
+        {"user_id": user_id, "drama_id": drama_id},
+        {"$set": {"user_id": user_id, "drama_id": drama_id}},
+        upsert=True
+    )
+    await query.answer("🔔 You are subscribed! You'll get notified on release day.", show_alert=True)
 
 # ---------------- NOTIFICATIONS ----------------
 async def notify_subscribers():
-    """Send release day notifications to subscribed users."""
+    """Send release-day notifications to subscribed users"""
     while True:
-        today = datetime.now().strftime("%Y-%m-%d")
+        today = datetime.date.today().strftime("%Y-%m-%d")
         dramas_today = comingsoon_col.find({"release_date": today})
         for drama in dramas_today:
-            subscribers = subscriptions_col.find({"drama_id": str(drama['_id'])})
+            subscribers = subscriptions_col.find({"drama_id": drama["_id"]})
             for sub in subscribers:
                 try:
                     await BOT.send_message(
-                        chat_id=sub['user_id'],
+                        chat_id=sub["user_id"],
                         text=f"🎉 <b>{drama['title']}</b> is released today!\nWatch here: {drama.get('trailer','')}",
                         disable_web_page_preview=False
                     )
