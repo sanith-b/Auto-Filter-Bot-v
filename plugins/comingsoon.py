@@ -1,9 +1,9 @@
-import requests
 import datetime
 import asyncio
+import requests
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient
 
 # ---------------- CONFIG ----------------
 TMDB_API_KEY = "90dde61a7cf8339a2cff5d805d5597a9"
@@ -11,17 +11,16 @@ MONGO_URI = "mongodb+srv://botadmin:1sQZEOQ7y3SSPNV3@kdramabot.00xhgvx.mongodb.n
 DB_NAME = "kdramabot"
 
 # ---------------- DATABASE ----------------
-client = MongoClient(MONGO_URI)
+client = AsyncIOMotorClient(MONGO_URI)
 db = client[DB_NAME]
 
-# Automatic creation of collections
-comingsoon_col = db.get_collection("comingsoon")
-watchlist_col = db.get_collection("watchlist")
-subscriptions_col = db.get_collection("subscriptions")
+comingsoon_col = db.comingsoon
+watchlist_col = db.watchlist
+subscriptions_col = db.subscriptions
 
 # ---------------- HELPERS ----------------
-def fetch_coming_soon():
-    """Fetch upcoming K-Dramas from TMDb and store in MongoDB with cast, genres, trailer"""
+async def fetch_coming_soon():
+    """Fetch upcoming K-Dramas from TMDb with cast, genres, trailer"""
     today = datetime.date.today().strftime("%Y-%m-%d")
     url = (
         f"https://api.themoviedb.org/3/discover/tv"
@@ -32,19 +31,20 @@ def fetch_coming_soon():
         f"&language=en-US&page=1"
     )
     res = requests.get(url).json()
+    genres_list = requests.get(f"https://api.themoviedb.org/3/genre/tv/list?api_key={TMDB_API_KEY}&language=en-US").json().get("genres", [])
+    genre_dict = {g["id"]: g["name"] for g in genres_list}
+
     for item in res.get("results", []):
         drama_id = str(item.get("id"))
 
-        # Fetch cast
+        # Cast
         cast_res = requests.get(f"https://api.themoviedb.org/3/tv/{drama_id}/credits?api_key={TMDB_API_KEY}").json()
-        cast = [c['name'] for c in cast_res.get('cast', [])[:5]]
+        cast = [c["name"] for c in cast_res.get("cast", [])[:5]]
 
-        # Fetch genres
-        genre_list = requests.get(f"https://api.themoviedb.org/3/genre/tv/list?api_key={TMDB_API_KEY}&language=en-US").json().get('genres', [])
-        genre_dict = {g['id']: g['name'] for g in genre_list}
-        genres = [genre_dict.get(gid, str(gid)) for gid in item.get('genre_ids', [])]
+        # Genres
+        genres = [genre_dict.get(gid, str(gid)) for gid in item.get("genre_ids", [])]
 
-        # Fetch trailer
+        # Trailer
         trailer_res = requests.get(f"https://api.themoviedb.org/3/tv/{drama_id}/videos?api_key={TMDB_API_KEY}&language=en-US").json()
         trailer = ""
         for vid in trailer_res.get("results", []):
@@ -52,13 +52,12 @@ def fetch_coming_soon():
                 trailer = f"https://youtu.be/{vid['key']}"
                 break
 
-        comingsoon_col.update_one(
+        await comingsoon_col.update_one(
             {"_id": drama_id},
             {"$set": {
-                "_id": drama_id,
                 "title": item.get("name"),
                 "release_date": item.get("first_air_date"),
-                "overview": item.get("overview", "No description available."),
+                "overview": item.get("overview", "No description."),
                 "poster": f"https://image.tmdb.org/t/p/w500{item['poster_path']}" if item.get("poster_path") else None,
                 "cast": cast,
                 "genre": genres,
@@ -68,7 +67,6 @@ def fetch_coming_soon():
         )
 
 def drama_buttons(drama):
-    """Create inline buttons for each drama with watchlist and subscribe"""
     buttons = []
     if drama.get("trailer"):
         buttons.append([InlineKeyboardButton("▶️ Watch Trailer", url=drama["trailer"])])
@@ -101,9 +99,9 @@ def format_drama_caption(drama):
 # ---------------- COMMAND ----------------
 @Client.on_message(filters.command("comingsoon"))
 async def comingsoon_handler(client, message):
-    fetch_coming_soon()
-    await asyncio.sleep(1)  # allow DB to update
-    dramas = list(comingsoon_col.find().sort("release_date", 1).limit(5))
+    await fetch_coming_soon()
+    await asyncio.sleep(1)
+    dramas = await comingsoon_col.find().sort("release_date", 1).to_list(length=5)
 
     if not dramas:
         await message.reply_text("🌸 No upcoming K-Dramas found!")
@@ -121,7 +119,7 @@ async def comingsoon_handler(client, message):
 async def watchlist_callback(client, query):
     drama_id = query.data.split(":")[1]
     user_id = query.from_user.id
-    db.watchlist.update_one(
+    await watchlist_col.update_one(
         {"user_id": user_id, "drama_id": drama_id},
         {"$set": {"user_id": user_id, "drama_id": drama_id}},
         upsert=True
@@ -132,7 +130,7 @@ async def watchlist_callback(client, query):
 async def subscribe_callback(client, query):
     drama_id = query.data.split(":")[1]
     user_id = query.from_user.id
-    db.subscriptions.update_one(
+    await subscriptions_col.update_one(
         {"user_id": user_id, "drama_id": drama_id},
         {"$set": {"user_id": user_id, "drama_id": drama_id}},
         upsert=True
@@ -141,12 +139,13 @@ async def subscribe_callback(client, query):
 
 # ---------------- NOTIFICATIONS ----------------
 async def notify_subscribers():
-    """Send release-day notifications to subscribed users"""
+    """Send notifications to subscribers daily"""
     while True:
         today = datetime.date.today().strftime("%Y-%m-%d")
-        dramas_today = comingsoon_col.find({"release_date": today})
+        dramas_today = await comingsoon_col.find({"release_date": today}).to_list(length=50)
+
         for drama in dramas_today:
-            subscribers = subscriptions_col.find({"drama_id": drama["_id"]})
+            subscribers = await subscriptions_col.find({"drama_id": drama["_id"]}).to_list(length=50)
             for sub in subscribers:
                 try:
                     await BOT.send_message(
@@ -156,4 +155,5 @@ async def notify_subscribers():
                     )
                 except:
                     continue
-        await asyncio.sleep(86400)  # check once daily
+
+        await asyncio.sleep(86400)  # run once daily
