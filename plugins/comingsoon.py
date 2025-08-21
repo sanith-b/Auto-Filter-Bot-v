@@ -1,4 +1,4 @@
-# plugins/comingsoon_full.py
+# plugins/comingsoon.py
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pymongo import MongoClient
@@ -12,15 +12,18 @@ DB_NAME = "kdramabot"
 TMDB_API_KEY = "90dde61a7cf8339a2cff5d805d5597a9"
 BOT = Client.get_current()
 
-# Connect to MongoDB
+# ---------------- DATABASE ----------------
 client = MongoClient(MONGO_URI)
 db = client[DB_NAME]
-comingsoon_col = db.comingsoon       # Stores upcoming dramas
-watchlist_col = db.watchlist         # Stores user watchlists
-subscriptions_col = db.subscriptions # Stores user subscriptions
+
+# Ensure collections exist
+comingsoon_col = db.get_collection("comingsoon")
+watchlist_col = db.get_collection("watchlist")
+subscriptions_col = db.get_collection("subscriptions")
 
 # ---------------- HELPERS ----------------
 def fetch_upcoming_dramas():
+    """Fetch upcoming dramas from TMDb and store in MongoDB."""
     url = f"https://api.themoviedb.org/3/tv/upcoming?api_key={TMDB_API_KEY}&language=en-US&page=1"
     res = requests.get(url).json()
     for item in res.get('results', []):
@@ -44,7 +47,7 @@ def fetch_upcoming_dramas():
                 trailer = f"https://youtu.be/{vid['key']}"
                 break
 
-        # Upsert drama in MongoDB
+        # Upsert drama
         comingsoon_col.update_one(
             {"_id": drama_id},
             {"$set": {
@@ -61,6 +64,7 @@ def fetch_upcoming_dramas():
         )
 
 def drama_inline_buttons():
+    """Create inline buttons for upcoming dramas."""
     buttons = []
     dramas = comingsoon_col.find().sort("release_date", 1).limit(10)
     for drama in dramas:
@@ -68,6 +72,7 @@ def drama_inline_buttons():
     return InlineKeyboardMarkup(buttons)
 
 def drama_detail_buttons(drama_id):
+    """Buttons for watchlist and notifications."""
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("➕ Add to Watchlist", callback_data=f"watchlist:{drama_id}")],
         [InlineKeyboardButton("🔔 Subscribe", callback_data=f"subscribe:{drama_id}")]
@@ -136,6 +141,7 @@ async def callback_handler(client, callback_query):
 
 # ---------------- NOTIFICATIONS ----------------
 async def notify_subscribers():
+    """Send release day notifications to subscribed users."""
     while True:
         today = datetime.now().strftime("%Y-%m-%d")
         dramas_today = comingsoon_col.find({"release_date": today})
@@ -150,4 +156,4 @@ async def notify_subscribers():
                     )
                 except:
                     continue
-        await asyncio.sleep(86400)  # check daily
+        await asyncio.sleep(86400)  # check once daily
