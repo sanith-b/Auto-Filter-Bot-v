@@ -1,5 +1,5 @@
-from .core import register_comingsoon
-from .scheduler import start_scheduler
+from plugins.comingsoon.core import register_comingsoon
+from plugins.comingsoon.scheduler import start_scheduler
 
 def register_plugin(app):
     register_comingsoon(app)
