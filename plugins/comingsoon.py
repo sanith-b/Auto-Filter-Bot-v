@@ -15,12 +15,10 @@ client = AsyncIOMotorClient(MONGO_URI)
 db = client[DB_NAME]
 
 comingsoon_col = db.comingsoon
-watchlist_col = db.watchlist
 subscriptions_col = db.subscriptions
 
 # ---------------- HELPERS ----------------
 async def fetch_coming_soon():
-    """Fetch upcoming K-Dramas from TMDb with cast, genres, trailer"""
     today = datetime.date.today().strftime("%Y-%m-%d")
     url = (
         f"https://api.themoviedb.org/3/discover/tv"
@@ -70,10 +68,7 @@ def drama_buttons(drama):
     buttons = []
     if drama.get("trailer"):
         buttons.append([InlineKeyboardButton("▶️ Watch Trailer", url=drama["trailer"])])
-    buttons.append([
-        InlineKeyboardButton("➕ Add to Watchlist", callback_data=f"watchlist:{drama['_id']}"),
-        InlineKeyboardButton("🔔 Subscribe", callback_data=f"subscribe:{drama['_id']}")
-    ])
+    buttons.append([InlineKeyboardButton("🔔 Subscribe", callback_data=f"subscribe:{drama['_id']}")])
     return InlineKeyboardMarkup(buttons)
 
 def format_drama_caption(drama):
@@ -115,17 +110,6 @@ async def comingsoon_handler(client, message):
         )
 
 # ---------------- CALLBACKS ----------------
-@Client.on_callback_query(filters.regex(r"^watchlist:"))
-async def watchlist_callback(client, query):
-    drama_id = query.data.split(":")[1]
-    user_id = query.from_user.id
-    await watchlist_col.update_one(
-        {"user_id": user_id, "drama_id": drama_id},
-        {"$set": {"user_id": user_id, "drama_id": drama_id}},
-        upsert=True
-    )
-    await query.answer("➕ Added to your watchlist!", show_alert=True)
-
 @Client.on_callback_query(filters.regex(r"^subscribe:"))
 async def subscribe_callback(client, query):
     drama_id = query.data.split(":")[1]
