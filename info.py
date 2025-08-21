@@ -35,6 +35,8 @@ USDTQR = (environ.get('USDTQR', 'https://files.catbox.moe/yyepjk.jpg'))
 TONQR = (environ.get('TONQR', 'https://files.catbox.moe/nzx7g3.jpg'))
 BITCOINQR = (environ.get('BITCOINQR', 'https://files.catbox.moe/wqfh2c.jpg'))
 
+TMDB_API_KEY = (environ.get('TMDB_API_KEY', '90dde61a7cf8339a2cff5d805d5597a9'))
+
 ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '').split()] 
 CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '-100').split()]
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-100'))  
