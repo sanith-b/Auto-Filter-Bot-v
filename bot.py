@@ -22,6 +22,7 @@ import pyrogram.utils
 from PIL import Image
 import threading, time, requests
 from logging_helper import LOGGER
+from plugins.comingsoon import notify_subscribers
 
 
 botStartTime = time.time()
@@ -46,6 +47,7 @@ threading.Thread(target=ping_loop, daemon=True).start()
 async def SilentXBotz_start():
     LOGGER.info('Initalizing Your Bot!')
     await SilentX.start()
+    SilentX.loop.create_task(notify_subscribers())
     bot_info = await SilentX.get_me()
     SilentX.username = bot_info.username
     await initialize_clients()
