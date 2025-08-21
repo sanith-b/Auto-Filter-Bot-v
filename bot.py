@@ -22,6 +22,10 @@ import pyrogram.utils
 from PIL import Image
 import threading, time, requests
 from logging_helper import LOGGER
+from plugins.comingsoon import register_comingsoon, start_scheduler
+
+register_comingsoon(app)
+start_scheduler(app)
 
 botStartTime = time.time()
 ppath = "plugins/*.py"
