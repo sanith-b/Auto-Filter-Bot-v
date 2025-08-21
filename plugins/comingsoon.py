@@ -6,7 +6,7 @@ from datetime import datetime
 import requests
 import asyncio
 
-TMDB_API_KEY = "your_tmdb_api_key_here"
+TMDB_API_KEY = "90dde61a7cf8339a2cff5d805d5597a9"
 BOT = Client.get_current()
 
 comingsoon_col = db.comingsoon  # Using your existing db instance
