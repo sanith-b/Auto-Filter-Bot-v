@@ -22,6 +22,7 @@ import pyrogram.utils
 from PIL import Image
 import threading, time, requests
 from logging_helper import LOGGER
+from plugins.comingsoon import register_plugin
 
 
 botStartTime = time.time()
@@ -95,7 +96,14 @@ async def SilentXBotz_start():
     bind_address = "0.0.0.0"
     await web.TCPSite(app, bind_address, PORT).start()
     await idle()
-    
+    # ...
+    for name in files:
+        # ...
+        if plugin_name == "comingsoon":
+            import plugins.comingsoon
+            plugins.comingsoon.register_plugin(SilentX)
+    # ...
+
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     try:
