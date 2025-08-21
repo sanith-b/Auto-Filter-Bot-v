@@ -1,5 +1,5 @@
 import requests
-from pyrogram import filters
+from pyrogram import filters,Client
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from pymongo import MongoClient
@@ -14,8 +14,6 @@ DB_NAME = "kdramabot"
 client_db = MongoClient(MONGO_URI)[DB_NAME]
 reminders = client_db["reminders"]
 scheduler = AsyncIOScheduler()
-
-# ===== DRAMA CACHE =====
 DRAMA_CACHE = {}
 
 # ===== FETCH COMING SOON =====
@@ -24,9 +22,10 @@ def fetch_comingsoon():
     res = requests.get(url).json()
     return res.get("results", [])[:5]
 
-# ===== COMMAND =====
-def register_comingsoon(client):
-    @client.on_message(filters.command("comingsoon"))
+# ===== REGISTER PLUGIN =====
+def register_comingsoon(bot):
+
+    @bot.on_message(filters.command("comingsoon"))
     async def comingsoon_handler(client, message):
         dramas = fetch_comingsoon()
         if not dramas:
@@ -39,8 +38,7 @@ def register_comingsoon(client):
 
         await message.reply("📺 Coming Soon K-Dramas:", reply_markup=InlineKeyboardMarkup(buttons))
 
-    # ===== CALLBACK DETAILS =====
-    @client.on_callback_query(filters.regex(r"^drama_"))
+    @bot.on_callback_query(filters.regex(r"^drama_"))
     async def drama_details(client, query: CallbackQuery):
         drama_id = query.data.split("_")[1]
         drama = DRAMA_CACHE.get(drama_id)
@@ -75,20 +73,19 @@ def register_comingsoon(client):
 
         await query.answer()
 
-    # ===== REMIND ME CALLBACK =====
-    @client.on_callback_query(filters.regex(r"^remind_"))
+    @bot.on_callback_query(filters.regex(r"^remind_"))
     async def set_reminder(client, query: CallbackQuery):
         parts = query.data.split("_")
         drama_id = parts[1]
         release_date = parts[2]
         user_id = query.from_user.id
 
-        reminders.update_one({"user_id": user_id, "drama_id": drama_id}, 
+        reminders.update_one({"user_id": user_id, "drama_id": drama_id},
                              {"$set": {"user_id": user_id, "drama_id": drama_id, "release_date": release_date}}, upsert=True)
 
         await query.answer("Reminder set! You will be notified on release day.", show_alert=True)
 
-# ===== SCHEDULED REMINDER JOB =====
+# ===== SCHEDULED REMINDER =====
 def start_scheduler(bot_client):
     async def check_reminders():
         today = datetime.date.today().isoformat()
