@@ -10,6 +10,7 @@ import asyncio
 MONGO_URI = "mongodb+srv://botadmin:1sQZEOQ7y3SSPNV3@kdramabot.00xhgvx.mongodb.net/?retryWrites=true&w=majority&appName=kdramabot"
 DB_NAME = "kdramabot"
 TMDB_API_KEY = "90dde61a7cf8339a2cff5d805d5597a9"
+BOT = Client.get_current()
 
 # ---------------- DATABASE ----------------
 client = MongoClient(MONGO_URI)
@@ -65,10 +66,10 @@ def fetch_upcoming_dramas():
 def drama_inline_buttons():
     """Create inline buttons for upcoming dramas."""
     buttons = []
-    dramas = comingsoon_col.find().sort("release_date", 1).limit(10)
+    dramas = list(comingsoon_col.find().sort("release_date", 1).limit(10))
     for drama in dramas:
         buttons.append([InlineKeyboardButton(drama['title'], callback_data=f"drama:{drama['_id']}")])
-    return InlineKeyboardMarkup(buttons)
+    return InlineKeyboardMarkup(buttons) if buttons else None
 
 def drama_detail_buttons(drama_id):
     """Buttons for watchlist and notifications."""
@@ -93,10 +94,16 @@ def format_drama_details(drama):
     return text
 
 # ---------------- COMMAND ----------------
-@Client.on_message(filters.command("comingsoon"))
+@BOT.on_message(filters.command("comingsoon"))
 async def comingsoon_command(client, message):
     fetch_upcoming_dramas()
+    await asyncio.sleep(1)  # allow DB to update
     buttons = drama_inline_buttons()
+
+    if not buttons:
+        await message.reply_text("📺 No upcoming dramas found!")
+        return
+
     await message.reply_text(
         "📺 <b>Upcoming K-Dramas:</b>\nClick a drama to see details.",
         reply_markup=buttons,
@@ -104,7 +111,7 @@ async def comingsoon_command(client, message):
     )
 
 # ---------------- CALLBACKS ----------------
-@Client.on_callback_query()
+@BOT.on_callback_query()
 async def callback_handler(client, callback_query):
     data = callback_query.data
     user_id = callback_query.from_user.id
