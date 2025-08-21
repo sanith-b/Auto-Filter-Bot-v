@@ -128,7 +128,7 @@ async def watchlist_callback(client, query):
     )
     await query.answer("➕ Added to your watchlist!", show_alert=True)
 
-@BOT.on_callback_query(filters.regex(r"^subscribe:"))
+@Client.on_callback_query(filters.regex(r"^subscribe:"))
 async def subscribe_callback(client, query):
     drama_id = query.data.split(":")[1]
     user_id = query.from_user.id
