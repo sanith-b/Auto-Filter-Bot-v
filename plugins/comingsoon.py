@@ -10,7 +10,6 @@ import asyncio
 MONGO_URI = "mongodb+srv://botadmin:1sQZEOQ7y3SSPNV3@kdramabot.00xhgvx.mongodb.net/?retryWrites=true&w=majority&appName=kdramabot"
 DB_NAME = "kdramabot"
 TMDB_API_KEY = "90dde61a7cf8339a2cff5d805d5597a9"
-BOT = Client.get_current()
 
 # ---------------- DATABASE ----------------
 client = MongoClient(MONGO_URI)
@@ -94,7 +93,7 @@ def format_drama_details(drama):
     return text
 
 # ---------------- COMMAND ----------------
-@BOT.on_message(filters.command("comingsoon"))
+@Client.on_message(filters.command("comingsoon"))
 async def comingsoon_command(client, message):
     fetch_upcoming_dramas()
     buttons = drama_inline_buttons()
@@ -105,7 +104,7 @@ async def comingsoon_command(client, message):
     )
 
 # ---------------- CALLBACKS ----------------
-@BOT.on_callback_query()
+@Client.on_callback_query()
 async def callback_handler(client, callback_query):
     data = callback_query.data
     user_id = callback_query.from_user.id
