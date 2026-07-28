@@ -4,6 +4,7 @@ from datetime import timedelta
 import time, datetime, pytz
 from pymongo.errors import DuplicateKeyError
 from pymongo import MongoClient
+from logging_helper import LOGGER
 
 class Database:    
     def __init__(self, uri, database_name):
@@ -30,8 +31,8 @@ class Database:
         if AUTH_REQ_CHANNEL:
             for c in AUTH_REQ_CHANNEL:
                 c = str(c)
-            result = await self.db.request[c].delete_many({})
-            print(result)
+                result = await self.db.request[c].delete_many({})
+                LOGGER.info(f"Deleted {result.deleted_count} requests from {c}")
 
     def new_user(self, id, name):
         return dict(
@@ -106,8 +107,8 @@ class Database:
         return b_users, b_chats
     
     async def add_chat(self, chat, title):
-        chat = self.new_group(chat, title)
-        await self.grp.insert_one(chat)
+        chat_data = self.new_group(chat, title)
+        await self.grp.update_one({'id': int(chat)}, {'$set': chat_data}, upsert=True)
     
     async def get_chat(self, chat):
         chat = await self.grp.find_one({'id':int(chat)})
@@ -121,17 +122,18 @@ class Database:
         await self.grp.update_one({'id': int(id)}, {'$set': {'chat_status': chat_status}})
         
     async def update_settings(self, id, settings):
-        await self.grp.update_one({'id': int(id)}, {'$set': {'settings': settings}})
+        await self.grp.update_one({'id': int(id)}, {'$set': {'settings': settings}}, upsert=True)
             
     async def get_settings(self, id):
         default = {
-            'button': LINK_MODE,
+            'button': BUTTON_MODE,
             'botpm': P_TTI_SHOW_OFF,
             'file_secure': PROTECT_CONTENT,
             'imdb': IMDB,
             'spell_check': SPELL_CHECK_REPLY,
             'welcome': MELCOW_NEW_USERS,
             'auto_delete': AUTO_DELETE,
+            'auto_del_time': AUTO_DELETE_TIME,
             'auto_ffilter': AUTO_FFILTER,
             'max_btn': MAX_BTN,
             'template': IMDB_TEMPLATE,
@@ -153,9 +155,12 @@ class Database:
         }
         chat = await self.grp.find_one({'id':int(id)})
         if chat and 'settings' in chat:
-            return chat['settings']
+            return {**default, **chat['settings']}
         else:
             return default.copy()
+
+    async def delete_setting(self, id, key):
+        await self.grp.update_one({'id': int(id)}, {'$unset': {f'settings.{key}': ""}})
 
     async def silentx_reset_settings(self):
         try:
@@ -166,7 +171,7 @@ class Database:
             modified_count = result.modified_count
             return modified_count
         except Exception as e:
-            print(f"Error deleting settings for all groups: {str(e)}")
+            LOGGER.error(f"Error deleting settings for all groups: {str(e)}")
             raise
             
     async def disable_chat(self, chat, reason="No Reason"):
@@ -317,7 +322,7 @@ class Database:
             result = await self.users.update_one(filter_query, update_data)
             return result.matched_count == 1
         except Exception as e:
-            print(f"Error updating document: {e}")
+            LOGGER.error(f"Error updating document: {e}")
             return False
             
     # Premium expired reminder ( This Code Modified By @BOT_OWNER26)

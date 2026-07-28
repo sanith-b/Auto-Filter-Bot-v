@@ -47,26 +47,26 @@ DATABASE_NAME = environ.get('DATABASE_NAME', "Cluster0")
 COLLECTION_NAME = environ.get('COLLECTION_NAME', 'SilentXBotz_files')
 
 # If MULTIPLE_DB Is True Then Fill DATABASE_URI2 Value Else You Will Get Error.
-MULTIPLE_DB = is_enabled(os.environ.get('MULTIPLE_DB', "False"), False) # Type True For Turn On MULTIPLE DB FUNTION 
+MULTIPLE_DB = is_enabled(os.environ.get('MULTIPLE_DB', "True"), True) # Type True For Turn On MULTIPLE DB FUNTION 
 DATABASE_URI2 = environ.get('DATABASE_URI2', "")
 DB_CHANGE_LIMIT = int(environ.get('DB_CHANGE_LIMIT', "432")) 
 
-GRP_LNK = environ.get('GRP_LNK', 'https://t.me/')
-CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/')
-OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/')
-UPDATE_CHANNEL_LNK = environ.get('UPDATE_CHANNEL_LNK', 'https://t.me/')
+GRP_LNK = environ.get('GRP_LNK', 'https://t.me/SilentXBotz')
+CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/SilentXBotz')
+OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/SilentXBotz')
+UPDATE_CHANNEL_LNK = environ.get('UPDATE_CHANNEL_LNK', 'https://t.me/SilentXBotz')
 
-AUTH_CHANNEL = environ.get("AUTH_CHANNEL", "") # add multiple channels here, separated by single space
-AUTH_REQ_CHANNEL = environ.get('AUTH_REQ_CHANNEL', '') # add multiple channels here, separated by single space
+AUTH_CHANNEL = environ.get("AUTH_CHANNEL", "-100") # add multiple channels here, separated by single space
+AUTH_REQ_CHANNEL = environ.get('AUTH_REQ_CHANNEL', '-100')
 
-IS_VERIFY = is_enabled('IS_VERIFY', True)
-LOG_VR_CHANNEL = int(environ.get('LOG_VR_CHANNEL', '100'))
+IS_VERIFY = is_enabled('IS_VERIFY', False)
+LOG_VR_CHANNEL = int(environ.get('LOG_VR_CHANNEL', '-100'))
 LOG_API_CHANNEL = int(environ.get('LOG_API_CHANNEL', '-100'))
 VERIFY_IMG = environ.get("VERIFY_IMG", "https://telegra.ph/file/9ecc5d6e4df5b83424896.jpg")
 
-TUTORIAL = environ.get("TUTORIAL", "https://t.me/")
-TUTORIAL_2 = environ.get("TUTORIAL_2", "https://t.me/")
-TUTORIAL_3 = environ.get("TUTORIAL_3", "https://t.me/")
+TUTORIAL = environ.get("TUTORIAL", "https://t.me/SilentXBotz")
+TUTORIAL_2 = environ.get("TUTORIAL_2", "https://t.me/SilentXBotz")
+TUTORIAL_3 = environ.get("TUTORIAL_3", "https://t.me/SilentXBotz")
 
 SHORTENER_API = environ.get("SHORTENER_API", "")
 SHORTENER_WEBSITE = environ.get("SHORTENER_WEBSITE", "")
@@ -91,14 +91,15 @@ P_TTI_SHOW_OFF = is_enabled((environ.get('P_TTI_SHOW_OFF', "False")), False)
 IMDB = is_enabled((environ.get('IMDB', "False")), False)
 AUTO_FFILTER = is_enabled((environ.get('AUTO_FFILTER', "True")), True)
 AUTO_DELETE = is_enabled((environ.get('AUTO_DELETE', "True")), True)
-DELETE_TIME = int(environ.get("DELETE_TIME", "300"))  
-LINK_MODE = is_enabled((environ.get('LINK_MODE', "True")), True)
+AUTO_DELETE_TIME = int(environ.get("AUTO_DELETE_TIME", "300"))  
+BUTTON_MODE = is_enabled((environ.get('BUTTON_MODE', "True")), True)
+IS_LANDSCAPE_POSTER = is_enabled((environ.get('IS_LANDSCAPE_POSTER', "True")), True)
 CUSTOM_FILE_CAPTION = environ.get("CUSTOM_FILE_CAPTION", f"{script.CAPTION}")
 BATCH_FILE_CAPTION = environ.get("BATCH_FILE_CAPTION", CUSTOM_FILE_CAPTION)
 IMDB_TEMPLATE = environ.get("IMDB_TEMPLATE", f"{script.IMDB_TEMPLATE_TXT}")
 LONG_IMDB_DESCRIPTION = is_enabled(environ.get("LONG_IMDB_DESCRIPTION", "False"), False)
 SPELL_CHECK_REPLY = is_enabled(environ.get("SPELL_CHECK_REPLY", "True"), True)
-MAX_LIST_ELM = environ.get("MAX_LIST_ELM", None)
+MAX_LIST_ELM = int(environ.get("MAX_LIST_ELM") or 10) or None # Maximum number of elements in a list (default: 10, set 0 for no limit)
 INDEX_REQ_CHANNEL = int(environ.get('INDEX_REQ_CHANNEL', LOG_CHANNEL))
 FILE_STORE_CHANNEL = [int(ch) for ch in (environ.get('FILE_STORE_CHANNEL', '')).split()]
 MELCOW_NEW_USERS = is_enabled((environ.get('MELCOW_NEW_USERS', "False")), False)
@@ -109,15 +110,32 @@ PAID_STREAM = bool(environ.get('PAID_STREAM', False))
 STREAM_MODE = bool(environ.get('STREAM_MODE', False))
 MAINTENANCE_MODE = bool(environ.get('MAINTENANCE_MODE', False)) 
 
-
 IGNORE_WORDS = (list(os.environ.get("IGNORE_WORDS").split(",")) if os.environ.get("IGNORE_WORDS") else []) #Remove Words While Searching Files
-IGNORE_WORDS= ["movies", "Movies", ",", "episode", "Episode", "episodes", "Episodes", "south indian", "south indian movie", "South Indian Movie", "south movie", "South Movie", "South Indian", "web-series", "hindi me bhejo", "gujrati", "combined", "!", "kro", "jaldi", "Audio", "audio", "movi", "language", "Language", "Hollywood", "All", "all", "bollywood", "Bollywood", "South", "south", "HD", "hd", "karo", "Karo", "fullepisode", "please", "plz", "Please", "Plz", "send", "link", "Link", "full", "Full", "dabbed", "dubbed", "season", "Season", "web", "series", "Web", "Series", "webseries", "WebSeries", "upload", "HD", "Hd", "bhejo", "ful", "Send", "Bhejo"]
+IGNORE_WORDS = [
+    "movies", "movie", "episode", "episodes", "south indian", "south indian movie",
+    "south movie", "south indian", "web-series", "web series", "webseries", "hindi me bhejo",
+    "ful", ",", "!", "kro", "jaldi", "audio", "language", "mkv", "mp4", "web", "series",
+    "hollywood", "all", "bollywood", "south", "hd", "karo", "upload", "bhejo",
+    "fullepisode", "please", "plz", "send", "link", "dabbed", "dubbed", "season",
+]
 
-BAD_WORDS = ["Hdhub4u", "cinevood", "skymoviedHD"] #Remove Words From File_Name
+BAD_WORDS = [
+    "Hdhub4u", "cinevood", "skymoviedHD", "skymovieshd", "filmyzilla", "filmywap", 
+    "filmyhit", "moviesda", "tamilyogi", "isaimini", "tamilrockers", "tamilblasters",
+    "mkvmoviespoint", "mkvcinemas", "bolly4u", "9xmovies", "worldfree4u", "khatrimaza",
+    "pagalworld", "pagalmovies", "jio rockers", "teluguwap", "moviezwap", "dvdvilla",
+    "ssr movies", "vegamovies", "moviesflix", "hdmovieshub", "hdhub4u", "hdpopcorns",
+    "moviescounter", "coolmoviez", "fzmovies", "netnaija", "wawacity", "zone-telechargement",
+    "rarbg", "tigole", "qxit", "pxhd", "psa", "joy", "utr", "dtone", "mzabi", "chd",
+    "hon3y", "sparks", "shaanig", "daddy", "mkvcage", "yify", "yts", "ettv", "eztv",
+    "torrenting", "galaxyrg", "galaxtyy", "cpg", "propers", "remux", "webrip", "hdtv",
+    "official", "original", "dubbed", "dual audio", "multi audio", "hq", "hdrip",
+    "predvd", "dvdscr", "hdts", "camrip", "hdcam", "hdrip", "brrip", "bdrip",
+]
 
 LANGUAGES = ["malayalam", "", "tamil", "", "english", "", "hindi", "", "telugu", "", "kannada", "", "gujarati", "", "marathi", "", "punjabi", ""]
 QUALITIES = ["360P", "", "480P", "", "720P", "", "1080P", "", "1440P", "", "2160P", ""]
-SEASONS = ["s01" , "s02" , "s03" , "s04", "s05" , "s06" , "s07" , "s08" , "s09" , "s10"]
+SEASONS = ["Season 1", "Season 2", "Season 3", "Season 4", "Season 5", "Season 6", "Season 7", "Season 8", "Season 9", "Season 10"]
 
 
 NO_PORT = bool(environ.get('NO_PORT', False))

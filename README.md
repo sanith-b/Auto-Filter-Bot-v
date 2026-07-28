@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="https://github.com/NBBotz/Images/blob/main/Lucia.jpg">
+  <img src="https://github.com/NBBotz/Images/blob/main/Lucia-Filter-Bot.jpeg">
 </p>
 
 <h1 align="center">Lucia Filter Bot</h1>
 
 <p align="center">
-  <a href="https://t.me/SilentXBotz_Support">
+  <a href="https://t.me/SilentXBotz">
     <img src="https://img.shields.io/badge/Join-Support%20Group-blue?style=for-the-badge&logo=telegram">
   </a>
   <a href="http://t.me/Lucia_Filter_Bot">
@@ -55,7 +55,69 @@
 * `FQDN`: Make A Veriable On Your Deploying Plartform AndAdd You Deployed Bot App Link
 * `AUTH_CHANNEL`: ID of force subscribe channels (Multiple channels can be used separated by space)
 * `CHANNELS`: Username or ID of your files channels (Multiple channels can be used separated by space)
-*  Before Deploying The Bot Fill All Veriables. Check [info.py](https://github.com/NBBotz/Auto_Filter_Bot/blob/SilentXBotz/info.py) For All Veriables.
+*  Before Deploying The Bot Fill All Veriables. Check [info.py](https://github.com/NBBotz/Auto-Filter-Bot/blob/SilentXBotz/info.py) For All Veriables.
+
+
+## 🤖 Bot Commands
+
+### 👤 General Commands
+- `/start` - Start the bot
+- `/myplan` - Check your premium plan status
+- `/plan` - View available premium plans
+- `/redeem` - Redeem a premium code
+- `/alive` - Check if the bot is active
+- `/ping` - Check bot latency
+- `/system` - View system statistics
+- `/top_search` - View top searched queries
+- `/trendlist` - View trending search list
+- `/movies` - List recent movies
+- `/series` - List recent series
+- `/id` - Get your User ID or Chat ID
+- `/info` - Get detailed user information
+
+### 👥 Group Commands
+- `/settings` - Open settings menu (Group Admin only)
+- `/reload` - Reload group connection (Group Admin only)
+- `/details` - View current group settings
+- `/request` or `#request` - Request a movie or series
+- `/reset_group` - Reset group settings to default (Group Admin only)
+
+### 🛠 Admin Commands
+- `/logs` - Get the bot log file
+- `/delete` - Delete a file from the database
+- `/deleteall` - Delete all indexed files
+- `/send` - Send a message to a specific user
+- `/deletefiles` - Delete multiple files by keyword
+- `/pm_search` - Enable/Disable PM search
+- `/movie_update` - Enable/Disable movie update notifications
+- `/maintenance` - Enable/Disable maintenance mode
+- `/restart` - Restart the bot
+- `/admin_cmd` - Show all admin commands
+- `/resetall` - Reset settings for all groups
+- `/dropgroups` - Drop the groups collection
+- `/remove_premium` - Remove premium status from a user
+- `/get_premium` - Get premium user details
+- `/add_premium` - Add premium status to a user
+- `/premium_users` - List all premium users
+- `/setskip` - Set skip count for indexing
+- `/delreq` - Delete join requests
+- `/add_redeem` - Create a redeem code
+- `/clearcodes` - Clear all redeem codes
+- `/allcodes` - List all redeem codes
+- `/commands` - Show command list
+- `/leave` - Leave a specific chat
+- `/disable` - Disable the bot in a chat
+- `/enable` - Enable the bot in a chat
+- `/stats` - View bot statistics
+- `/invite` - Generate an invite link
+- `/ban` - Ban a user
+- `/unban` - Unban a user
+- `/users` - List all users
+- `/chats` - List all chats
+- `/broadcast` - Broadcast a message to all users
+- `/grp_broadcast` - Broadcast a message to all groups
+- `/clear_junk` - Clear junk data
+- `/junk_group` - Clear junk groups
 
 ## 🚀 Deployment Methods
 
@@ -67,7 +129,7 @@ Choose A Deployment Method Below And Get Your Bot Running Instantly!
 Click The Button Below To Instantly Deploy Your Bot On **Heroku**.  
 
 <p align="center">
-  <a href="https://heroku.com/deploy?template=https://github.com/NBBotz/Auto_Filter_Bot">
+  <a href="https://heroku.com/deploy?template=https://github.com/NBBotz/Auto-Filter-Bot">
     <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy on Heroku">
   </a>
 </p>
@@ -80,7 +142,7 @@ Click The Button Below To Instantly Deploy Your Bot On **Heroku**.
 Deploy On **Koyeb** In One Click!  
 
 <p align="center">
-  <a href="https://app.koyeb.com/deploy?type=git&repository=https://github.com/NBBotz/Auto_Filter_Bot&branch=SilentXBotz &name=LuciaFilterBot">
+  <a href="https://app.koyeb.com/deploy?type=git&repository=https://github.com/NBBotz/Auto-Filter-Bot&branch=SilentXBotz &name=LuciaFilterBot">
     <img src="https://www.koyeb.com/static/images/deploy/button.svg" alt="Deploy to Koyeb">
   </a>
 </p>
@@ -95,8 +157,8 @@ Run The Following Commands To Deploy The Bot On A **VPS**:
 
 ```bash
 mkdir SilentXBotz && cd SilentXBotz
-git clone https://github.com/NBBotz/Auto_Filter_Bot
-cd Auto_Filter_Bot
+git clone https://github.com/NBBotz/Auto-Filter-Bot
+cd Auto-Filter-Bot
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -108,7 +170,7 @@ python3 bot.py
 # ! Errors 
 - This Repository May Contain Some Errors. If You Encounter Any Issues, Please Let Us Know, And We Will Do Our Best To Resolve Them.
 <p align="center">
-  <a href="https://t.me/SilentXBotz_Support">
+  <a href="https://t.me/SilentXBotz">
     <img src="https://img.shields.io/badge/Report-Error-red?style=for-the-badge&logo=telegram" alt="Report Error">
   </a>
 </p>
@@ -130,5 +192,5 @@ This Repository Is Provided For Educational Purposes Only. It Is Not Intended Fo
 
 ## License
 
-This Project Is Licensed Under The [GNU General Public License v3.0](https://github.com/NBBotz/Auto_Filter_Bot/blob/SilentXBotz/LICENSE)
+This Project Is Licensed Under The [GNU General Public License v3.0](https://github.com/NBBotz/Auto-Filter-Bot/blob/SilentXBotz/LICENSE)
 

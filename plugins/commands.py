@@ -9,7 +9,7 @@ import pytz
 from logging_helper import LOGGER
 from .pm_filter import auto_filter 
 from Script import script
-from datetime import datetime
+from datetime import datetime, timedelta
 from database.refer import referdb
 from database.topdb import silentdb
 from pyrogram.enums import ParseMode, ChatType
@@ -20,6 +20,7 @@ from database.ia_filterdb import *
 from database.users_chats_db import db
 from info import *
 from utils import *
+from .fsub_helper import check_force_subscription, is_req_subscribed, is_subscribed
 
 TIMEZONE = "Asia/Kolkata"
 BATCH_FILES = {}
@@ -34,7 +35,7 @@ async def start(client, message):
             pass
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text("ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜")
         return
     m = message
     if len(m.command) == 2 and m.command[1].startswith(('notcopy', 'sendall')):
@@ -77,13 +78,11 @@ async def start(client, message):
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
         )
-        await asyncio.sleep(300)
-        await dlt.delete()
+        asyncio.create_task(delete_after_delay(dlt, 300))
         return         
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         silenxbotz=await message.reply_sticker("CAACAgEAAxkBAAENpaZnl898tVVOj-69IH89gx-8ee-CCAACWwIAAu8vQEXX2jgCrI2F-jYE")
-        await asyncio.sleep(5)
-        await silenxbotz.delete()
+        asyncio.create_task(delete_after_delay(silenxbotz, 5))
         if not await db.get_chat(message.chat.id):
             total=await client.get_chat_members_count(message.chat.id)
             await client.send_message(LOG_CHANNEL, script.LOG_TEXT_G.format(message.chat.title, message.chat.id, total, "Unknown"))       
@@ -125,6 +124,9 @@ async def start(client, message):
         if referdb.is_user_in_list(message.from_user.id):
             await message.reply_text("Yᴏᴜ ʜᴀᴠᴇ ʙᴇᴇɴ ᴀʟʀᴇᴀᴅʏ ɪɴᴠɪᴛᴇᴅ ❗")
             return
+        if await db.is_user_exist(message.from_user.id): 
+            await message.reply_text("‼️ Yᴏᴜ Hᴀᴠᴇ Bᴇᴇɴ Aʟʀᴇᴀᴅʏ Iɴᴠɪᴛᴇᴅ ᴏʀ Jᴏɪɴᴇᴅ")
+            return 
         try:
             uss = await client.get_users(user_id)
         except Exception:
@@ -133,13 +135,13 @@ async def start(client, message):
         fromuse = referdb.get_refer_points(user_id) + 10
         if fromuse == 100:
             referdb.add_refer_points(user_id, 0) 
-            await message.reply_text(f"🎉 𝗖𝗼𝗻𝗴𝗿𝗮𝘁𝘂𝗹𝗮𝘁𝗶𝗼𝗻𝘀! 𝗬𝗼𝘂 𝘄𝗼𝗻 𝟭𝟬 𝗥𝗲𝗳𝗲𝗿𝗿𝗮𝗹 𝗽𝗼𝗶𝗻𝘁 𝗯𝗲𝗰𝗮𝘂𝘀𝗲 𝗬𝗼𝘂 𝗵𝗮𝘃𝗲 𝗯𝗲𝗲𝗻 𝗦𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆 𝗜𝗻𝘃𝗶𝘁𝗲𝗱 ☞ {uss.mention}!")		    
-            await message.reply_text(user_id, f"You have been successfully invited by {message.from_user.mention}!") 	
+            await message.reply_text(f"🎉 𝗖𝗼𝗻𝗴𝗿𝗮𝘁𝘂𝗹𝗮𝘁𝗶𝗼𝗻𝘀! 𝗬𝗼𝘂 𝘄𝗼𝗻 𝟭𝟬 𝗥𝗲𝗳𝗲𝗿𝗿𝗮𝗹 𝗽𝗼𝗶𝗻𝘁 𝗯𝗲𝗰𝗮𝘂𝘀𝗲 𝗬𝗼𝘂 𝗵𝗮𝘃𝗲 𝗯𝗲𝗲𝗻 𝗦𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆 𝗜𝗻𝘃𝗶𝘁𝗲𝗱 ☞ {uss.mention}!")
+            await client.send_message(chat_id=user_id, text=f"You have been successfully invited by {message.from_user.mention}!")
             seconds = 2592000
             if seconds > 0:
-                expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
+                expiry_time = datetime.now() + timedelta(seconds=seconds)
                 user_data = {"id": user_id, "expiry_time": expiry_time}
-                await db.update_user(user_data)		    
+                await db.update_user(user_data)
                 await client.send_message(
                 chat_id=user_id,
                 text=f"<b>Hᴇʏ {uss.mention}\n\nYᴏᴜ ɢᴏᴛ 1 ᴍᴏɴᴛʜ ᴘʀᴇᴍɪᴜᴍ sᴜʙsᴄʀɪᴘᴛɪᴏɴ ʙʏ ɪɴᴠɪᴛɪɴɢ 10 ᴜsᴇʀs ❗", disable_web_page_preview=True              
@@ -163,48 +165,43 @@ async def start(client, message):
     data = message.command[1]
     try:
         pre, grp_id, file_id = data.split('_', 2)
-    except:
+    except Exception:
         pre, grp_id, file_id = "", 0, data
 
     try:
         settings = await get_settings(int(data.split("_", 2)[1]))
         fsub_id_list = settings.get('fsub_id', [])
-        btn = []
-        i = 1
         fsub_id_list = fsub_id_list + AUTH_CHANNEL if AUTH_CHANNEL else fsub_id_list
-        fsub_id_list = fsub_id_list + AUTH_REQ_CHANNEL if AUTH_REQ_CHANNEL else fsub_id_list
-        
+        fsub_id_list = fsub_id_list + AUTH_REQ_CHANNEL if AUTH_REQ_CHANNEL else fsub_id_list       
         if fsub_id_list:
             fsub_ids = []
             for chnl in fsub_id_list:
                 if chnl not in fsub_ids:
                     fsub_ids.append(chnl)
-                else:
-                    continue
-                try:
-                    channel_name = (await client.get_chat(chnl)).title or f"Update Channel"
-                except Exception:
-                    channel_name = f"Update Channel"
-                if AUTH_REQ_CHANNEL and chnl in AUTH_REQ_CHANNEL and not await is_req_subscribed(client, message, chnl):
-                    try:
-                        invite_link = await client.create_chat_invite_link(chnl, creates_join_request=True)
-                    except ChatAdminRequired:
-                        LOGGER.error("Bot Ko AUTH_CHANNEL Per Admin Bana Bhai Pahile 🤧")
-                        return
-                    btn.append([
-                        InlineKeyboardButton(f"⛔️ {i}. {channel_name} ⛔️", url=invite_link.invite_link)
-                    ])
-                elif chnl not in AUTH_REQ_CHANNEL and not await is_subscribed(client, message.from_user.id, chnl):
-                    try:
-                        invite_link = await client.create_chat_invite_link(chnl)
-                    except ChatAdminRequired:
-                        LOGGER.error("Bot Ko AUTH_CHANNEL Per Admin Bana Bhai Pahile 🤧")
-                        return
-                    btn.append([
-                        InlineKeyboardButton(f"⛔️ {i}. {channel_name} ⛔️", url=invite_link.invite_link)
-                    ])
-                i += 1
+            tasks = []
+            for chnl in fsub_ids:
+                is_req_channel = AUTH_REQ_CHANNEL and chnl in AUTH_REQ_CHANNEL
+                tasks.append(
+                    check_force_subscription(
+                        client,
+                        message.from_user.id,
+                        chnl,
+                        is_req_channel,
+                        is_subscribed,
+                        is_req_subscribed,
+                        message
+                    )
+                )
 
+            results = await asyncio.gather(*tasks)
+            btn = []
+            i = 1
+            for res in results:
+                if res:
+                    btn.append([
+                        InlineKeyboardButton(f"⛔️ {i}. {res['title']} ⛔️", url=res['url'])
+                    ])
+                    i += 1
             if btn:
                 if message.command[1] != "subscribe":
                     btn.append([InlineKeyboardButton("♻️ ᴛʀʏ ᴀɢᴀɪɴ ♻️", url=f"https://t.me/{temp.U_NAME}?start={message.command[1]}")])
@@ -256,9 +253,8 @@ async def start(client, message):
                     reply_markup=reply_markup,
                     parse_mode=enums.ParseMode.HTML
                 )
-                await asyncio.sleep(300) 
-                await n.delete()
-                await m.delete()
+                asyncio.create_task(delete_after_delay(n, 300))
+                asyncio.create_task(delete_after_delay(m, 300))
                 return
         except Exception as e:
             await log_error(client, f"Got Error In Verification Funtion.\n\n Error - {e}")
@@ -278,12 +274,13 @@ async def start(client, message):
             size = get_size(files1.file_size)
             f_caption = files1.caption
             settings = await get_settings(int(grp_id))
+            DELETE_TIME = settings.get("auto_del_time", AUTO_DELETE_TIME)
             SILENTX_CAPTION = settings.get('caption', CUSTOM_FILE_CAPTION)
             if SILENTX_CAPTION:
                 try:
                     f_caption=SILENTX_CAPTION.format(file_name= '' if title is None else title, file_size='' if size is None else size, file_caption='' if f_caption is None else f_caption)
                 except Exception as e:
-                    logger.exception(e)
+                    LOGGER.exception(e)
                     f_caption = f_caption
             if f_caption is None:
                 f_caption = clean_filename(files1.file_name) 
@@ -305,10 +302,20 @@ async def start(client, message):
             )
             filesarr.append(msg)
         k = await client.send_message(chat_id=message.from_user.id, text=f"<b><u>❗️❗️❗️IMPORTANT❗️️❗️❗️</u></b>\n\nᴛʜɪꜱ ᴍᴏᴠɪᴇ ꜰɪʟᴇ/ᴠɪᴅᴇᴏ ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ <b><u><code>{get_time(DELETE_TIME)}</code></u> 🫥 <i></b>(ᴅᴜᴇ ᴛᴏ ᴄᴏᴘʏʀɪɢʜᴛ ɪꜱꜱᴜᴇꜱ)</i>.\n\n<b><i>ᴘʟᴇᴀꜱᴇ ꜰᴏʀᴡᴀʀᴅ ᴛʜɪꜱ ꜰɪʟᴇ ᴛᴏ ꜱᴏᴍᴇᴡʜᴇʀᴇ ᴇʟꜱᴇ ᴀɴᴅ ꜱᴛᴀʀᴛ ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴛʜᴇʀᴇ</i></b>")
-        await asyncio.sleep(DELETE_TIME)
-        for x in filesarr:
-            await x.delete()
-        await k.edit_text("<b>ʏᴏᴜʀ ᴀʟʟ ᴠɪᴅᴇᴏꜱ/ꜰɪʟᴇꜱ ᴀʀᴇ ᴅᴇʟᴇᴛᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ !\nᴋɪɴᴅʟʏ ꜱᴇᴀʀᴄʜ ᴀɢᴀɪɴ</b>")
+
+        async def delete_all_after_delay(messages, k, delay):
+            await asyncio.sleep(delay)
+            for x in messages:
+                try:
+                    await x.delete()
+                except Exception:
+                    pass
+            try:
+                await k.edit_text("<b>ʏᴏᴜʀ ᴀʟʟ ᴠɪᴅᴇᴏꜱ/ꜰɪʟᴇꜱ ᴀʀᴇ ᴅᴇʟᴇᴛᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ !\nᴋɪɴᴅʟʏ ꜱᴇᴀʀᴄʜ ᴀɢᴀɪɴ</b>")
+            except Exception:
+                pass
+
+        asyncio.create_task(delete_all_after_delay(filesarr, k, DELETE_TIME))
         return
 
     user = message.from_user.id
@@ -339,19 +346,30 @@ async def start(client, message):
             size=get_size(file.file_size)
             f_caption = f"<code>{title}</code>"
             settings = await get_settings(int(grp_id))
+            DELETE_TIME = settings.get("auto_del_time", AUTO_DELETE_TIME)
             SILENTX_CAPTION = settings.get('caption', CUSTOM_FILE_CAPTION)
             if SILENTX_CAPTION:
                 try:
-                    f_caption=SILENTX_CAPTION.format(file_name= '' if title is None else title, file_size='' if size is None else size, file_caption='')
-                except:
+                    f_caption = SILENTX_CAPTION.format(file_name='' if title is None else title, file_size='' if size is None else size, file_caption='')
+                except Exception:
                     return
             await msg.edit_caption(f_caption)
             k = await msg.reply(f"<b>♻️ ᴛʜɪꜱ ꜰɪʟᴇ ᴡɪʟʟ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀꜰᴛᴇʀ {get_time(DELETE_TIME)}</b>", quote=True)
-            await asyncio.sleep(DELETE_TIME)
-            await msg.delete()
-            await k.edit_text("<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!</b>")
+
+            async def single_delete(msg, k, delay):
+                await asyncio.sleep(delay)
+                try:
+                    await msg.delete()
+                except Exception:
+                    pass
+                try:
+                    await k.edit_text("<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!</b>")
+                except Exception:
+                    pass
+
+            asyncio.create_task(single_delete(msg, k, DELETE_TIME))
             return
-        except:
+        except Exception:
             pass
         return await message.reply('ɴᴏ ꜱᴜᴄʜ ꜰɪʟᴇ ᴇxɪꜱᴛꜱ !')
     
@@ -359,7 +377,8 @@ async def start(client, message):
     title = clean_filename(files.file_name)
     size = get_size(files.file_size)
     f_caption = files.caption
-    settings = await get_settings(int(grp_id))            
+    settings = await get_settings(int(grp_id))         
+    DELETE_TIME = settings.get("auto_del_time", AUTO_DELETE_TIME)
     SILENTX_CAPTION = settings.get('caption', CUSTOM_FILE_CAPTION)
     if SILENTX_CAPTION:
         try:
@@ -387,9 +406,19 @@ async def start(client, message):
         reply_markup=InlineKeyboardMarkup(btn)
     )
     k = await msg.reply(f"<b>♻️ ᴛʜɪꜱ ꜰɪʟᴇ ᴡɪʟʟ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀꜰᴛᴇʀ {get_time(DELETE_TIME)}</b>", quote=True)     
-    await asyncio.sleep(DELETE_TIME)
-    await msg.delete()
-    await k.edit_text("<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!</b>")
+
+    async def single_delete(msg, k, delay):
+        await asyncio.sleep(delay)
+        try:
+            await msg.delete()
+        except Exception:
+            pass
+        try:
+            await k.edit_text("<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!</b>")
+        except Exception:
+            pass
+
+    asyncio.create_task(single_delete(msg, k, DELETE_TIME))
     return
 
 @Client.on_message(filters.command('logs') & filters.user(ADMINS))
@@ -490,7 +519,7 @@ async def settings(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text("ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜")
         return
     user_id = message.from_user.id if message.from_user else None
     if not user_id:
@@ -535,7 +564,7 @@ async def connect_group(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text("ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜")
         return
     user_id = message.from_user.id
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
@@ -553,15 +582,15 @@ async def connect_group(client, message):
             chat = await client.get_chat(group_id)
             await db.connect_group(group_id, user_id)
             await message.reply_text(f"Linked {chat.title} to PM.")
-        except:
+        except Exception:
             await message.reply_text("Invalid group ID or error occurred.")
 
 @Client.on_message((filters.command(["request", "Request"]) | filters.regex("#request") | filters.regex("#Request")) & filters.group)
 async def requests(bot, message):
-    bot_id = client.me.id
+    bot_id = bot.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text("ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜")
         return
     if REQST_CHANNEL is None or SUPPORT_CHAT_ID is None: return # Must add REQST_CHANNEL and SUPPORT_CHAT_ID to use this feature
     if message.reply_to_message and SUPPORT_CHAT_ID == message.chat.id:
@@ -593,7 +622,6 @@ async def requests(bot, message):
                 success = False
         except Exception as e:
             await message.reply_text(f"Error: {e}")
-            pass
         
     elif SUPPORT_CHAT_ID == message.chat.id:
         chat_id = message.chat.id
@@ -709,7 +737,7 @@ async def deletemultiplefiles(bot, message):
         pass
     try:
         keyword = message.text.split(" ", 1)[1]
-    except:
+    except Exception:
         return await message.reply_text(f"<b>Hey {message.from_user.mention}, Give me a keyword along with the command to delete files.</b>")
     k = await bot.send_message(chat_id=message.chat.id, text=f"<b>Fetching Files for your query {keyword} on DB... Please wait...</b>")
     files, total = await get_bad_files(keyword)
@@ -752,11 +780,11 @@ async def topsearch_callback(client, callback_query):
     await callback_query.answer()
 
 @Client.on_message(filters.command('top_search'))
-async def top(_, message):
+async def top(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text("ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜")
         return
     def is_alphanumeric(string):
         return bool(re.match('^[a-zA-Z0-9 ]*$', string))
@@ -787,7 +815,7 @@ async def trendlist(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text("ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜")
         return
     def is_alphanumeric(string):
         return bool(re.match('^[a-zA-Z0-9 ]*$', string))
@@ -895,7 +923,7 @@ async def reset_group_command(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text("ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜")
         return
     grp_id = message.chat.id
     if not await is_check_admin(client, grp_id, message.from_user.id):
@@ -928,60 +956,6 @@ async def reset_group_command(client, message):
     await save_group_settings(grp_id, 'fsub_id', AUTH_CHANNEL)
     await message.reply_text('ꜱᴜᴄᴄᴇꜱꜱғᴜʟʟʏ ʀᴇꜱᴇᴛ ɢʀᴏᴜᴘ ꜱᴇᴛᴛɪɴɢꜱ...')
 
-@Client.on_message(filters.command('set_fsub'))
-async def set_fsub(client, message):
-    bot_id = client.me.id
-    maintenance_mode = await db.get_maintenance_status(bot_id)
-    if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
-        return
-    chat_type = message.chat.type
-    if chat_type not in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-        return await message.reply_text("<b>ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪɴ ɢʀᴏᴜᴘ...</b>")
-    grp_id = message.chat.id
-    title = message.chat.title
-    if not await is_check_admin(client, grp_id, message.from_user.id):
-        return await message.reply_text('<b>ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ɪɴ ᴛʜɪꜱ ɢʀᴏᴜᴘ</b>')
-    try:
-        channel_id = int(message.text.split(" ", 1)[1])
-    except IndexError:
-        return await message.reply_text("<b>ᴄᴏᴍᴍᴀɴᴅ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ\n\nꜱᴇɴᴅ ᴍᴇ ᴄʜᴀɴɴᴇʟ ɪᴅ ᴡɪᴛʜ ᴄᴏᴍᴍᴀɴᴅ, ʟɪᴋᴇ <code>/set_fsub -100******</code></b>")
-    except ValueError:
-        return await message.reply_text('<b>ᴍᴀᴋᴇ ꜱᴜʀᴇ ᴛʜᴇ ɪᴅ ɪꜱ ᴀɴ ɪɴᴛᴇɢᴇʀ.</b>')
-    try:
-        chat = await client.get_chat(channel_id)
-    except Exception as e:
-        return await message.reply_text(f"<b><code>{channel_id}</code> ɪꜱ ɪɴᴠᴀʟɪᴅ. ᴍᴀᴋᴇ ꜱᴜʀᴇ <a href=https://t.me/{temp.B_LINK} ʙᴏᴛ</a> ɪꜱ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ\n\n<code>{e}</code></b>")
-    if chat.type != enums.ChatType.CHANNEL:
-        return await message.reply_text(f"🫥 <code>{channel_id}</code> ᴛʜɪꜱ ɪꜱ ɴᴏᴛ ᴄʜᴀɴɴᴇʟ, ꜱᴇɴᴅ ᴍᴇ ᴏɴʟʏ ᴄʜᴀɴɴᴇʟ ɪᴅ ɴᴏᴛ ɢʀᴏᴜᴘ ɪᴅ</b>")
-    await save_group_settings(grp_id, 'fsub_id', [channel_id])
-    mention = message.from_user.mention
-    await client.send_message(LOG_API_CHANNEL, f"#Fsub_Channel_set\n\nᴜꜱᴇʀ - {mention} ꜱᴇᴛ ᴛʜᴇ ꜰᴏʀᴄᴇ ᴄʜᴀɴɴᴇʟ ꜰᴏʀ {title}:\n\nꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ - {chat.title}\nɪᴅ - `{channel_id}`")
-    await message.reply_text(f"<b>ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ꜰᴏʀᴄᴇ ꜱᴜʙꜱᴄʀɪʙᴇ ᴄʜᴀɴɴᴇʟ ꜰᴏʀ {title}\n\nᴄʜᴀɴɴᴇʟ ɴᴀᴍᴇ - {chat.title}\nɪᴅ - <code>{channel_id}</code></b>")
-
-@Client.on_message(filters.command('remove_fsub'))
-async def remove_fsub(client, message):
-    bot_id = client.me.id
-    maintenance_mode = await db.get_maintenance_status(bot_id)
-    if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
-        return
-    chat_type = message.chat.type
-    if chat_type not in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-        return await message.reply_text("<b>ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪɴ ɢʀᴏᴜᴘ...</b>")       
-    grp_id = message.chat.id
-    title = message.chat.title
-    if not await is_check_admin(client, grp_id, message.from_user.id):
-        return await message.reply_text('<b>ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ɪɴ ᴛʜɪꜱ ɢʀᴏᴜᴘ</b>')
-    settings = await get_settings(grp_id)
-    if (c in AUTH_CHANNEL for c in settings['fsub_id']):
-        await message.reply_text("<b>ᴄᴜʀʀᴇɴᴛʟʏ ɴᴏ ᴀɴʏ ғᴏʀᴄᴇ ꜱᴜʙ ᴄʜᴀɴɴᴇʟ.... <code>[ᴅᴇғᴀᴜʟᴛ ᴀᴄᴛɪᴠᴀᴛᴇ]</code></b>")
-    else:
-        await save_group_settings(grp_id, 'fsub_id', AUTH_CHANNEL)
-        mention = message.from_user.mention
-        await client.send_message(LOG_API_CHANNEL, f"#Remove_Fsub_Channel\n\nᴜꜱᴇʀ - {mention} ʀᴇᴍᴏᴠᴇ ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ ꜰʀᴏᴍ {title}")
-        await message.reply_text(f"<b>✅ ꜱᴜᴄᴄᴇꜱꜱғᴜʟʟʏ ʀᴇᴍᴏᴠᴇᴅ ꜰᴏʀᴄᴇ ꜱᴜʙ ᴄʜᴀɴɴᴇʟ.</b>")         
-
 
 @Client.on_message(filters.command('details'))
 async def all_settings(client, message):    
@@ -989,7 +963,7 @@ async def all_settings(client, message):
         bot_id = client.me.id
         maintenance_mode = await db.get_maintenance_status(bot_id)
         if maintenance_mode and message.from_user.id not in ADMINS:
-            await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+            await message.reply_text("ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜")
             return
         chat_type = message.chat.type
         if chat_type not in [ChatType.GROUP, ChatType.SUPERGROUP]:
@@ -1043,7 +1017,7 @@ async def all_settings(client, message):
         await asyncio.sleep(300)
         await dlt.delete()
     except Exception as e:
-        LOGGER.error(f"Error : {e}")
+        LOGGER.exception(f"Error in all_settings: {e}")
         await message.reply_text(f"Error: {e}")
 
 @Client.on_message(filters.command('group_cmd'))
@@ -1051,7 +1025,7 @@ async def group_commands(client, message):
     bot_id = client.me.id
     maintenance_mode = await db.get_maintenance_status(bot_id)
     if maintenance_mode and message.from_user.id not in ADMINS:
-        await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+        await message.reply_text("ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜")
         return
     user = message.from_user.mention
     user_id = message.from_user.id
@@ -1069,7 +1043,7 @@ async def siletxbotz_list_movies(client, message):
         bot_id = client.me.id
         maintenance_mode = await db.get_maintenance_status(bot_id)
         if maintenance_mode and message.from_user.id not in ADMINS:
-            await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+            await message.reply_text("ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜")
             return
         movies = await siletxbotz_get_movies()
         if not movies:
@@ -1088,7 +1062,7 @@ async def siletxbotz_list_series(client, message):
         bot_id = client.me.id
         maintenance_mode = await db.get_maintenance_status(bot_id)
         if maintenance_mode and message.from_user.id not in ADMINS:
-            await message.reply_text(f"ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜", disable_web_page_preview=True)
+            await message.reply_text("ɪ ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠️. ɪ ᴡɪʟʟ ʙᴇ ʙᴀᴄᴋ ꜱᴏᴏɴ 🔜")
             return
         series_data = await siletxbotz_get_series()
         if not series_data:
@@ -1115,3 +1089,12 @@ async def reset_all_settings(client, message):
     except Exception as e:
         LOGGER.error(f"Error Processing Reset All Settings Command: {str(e)}")
         await message.reply("<b>ᴇʀʀᴏʀ 🚫.oᴄᴄᴜʀʀᴇᴅ ᴡʜɪʟᴇ ᴅᴇʟᴇᴛɪɴɢ ɢʀᴏᴜᴘ ꜱᴇᴛᴛɪɴɢꜱ! ᴘʟᴇᴀꜱᴇ ᴛʀʏ ᴀɢᴀɪɴ ʟᴀᴛᴇʀ.</b>", quote=True)       
+
+@Client.on_message(filters.command("dropgroups") & filters.user(ADMINS))
+async def drop_groups_command(client, message):
+    try:
+        await db.grp.drop()
+        await message.reply("The 'groups' Collection Has Been Deleted.")
+    except Exception as e:
+        await message.reply(f"Failed to delete collection: {e}")
+        

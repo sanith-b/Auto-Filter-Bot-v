@@ -1,22 +1,22 @@
-from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid
+from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid, MessageNotModified
 from info import  *
-from imdb import Cinemagoer 
+# pyrefly: ignore [missing-import]
+from imdbkit import IMDBKit 
 import asyncio
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram.errors import FloodWait, UserIsBlocked, MessageNotModified, PeerIdInvalid
 from pyrogram import enums
-from typing import Union
+from typing import Union, Optional, Dict, Any
 from Script import script
 import pytz
 import random 
 import re
 import os
+import time as time_module
 from datetime import datetime, date, time, timedelta
 import string
 from typing import List
 from database.users_chats_db import db
 from bs4 import BeautifulSoup
-import requests
 import aiohttp
 from shortzy import Shortzy
 import http.client
@@ -27,7 +27,9 @@ BTN_URL_REGEX = re.compile(
     r"(\[([^\[]+?)\]\((buttonurl|buttonalert):(?:/{0,2})(.+?)(:same)?\))"
 )
 
-imdb = Cinemagoer() 
+BAD_WORDS_REGEX = re.compile('|'.join(map(re.escape, sorted(BAD_WORDS, key=len, reverse=True))), flags=re.IGNORECASE) if BAD_WORDS else None
+
+imdb = IMDBKit() 
 BANNED = {}
 SMART_OPEN = '“'
 SMART_CLOSE = '”'
@@ -38,6 +40,7 @@ class temp(object):
     BANNED_USERS = []
     BANNED_CHATS = []
     SETTINGS = {}
+    SETTINGS_EXPIRY = {}
     ME = None
     CURRENT=int(os.environ.get("SKIP", 2))
     CANCEL = False
@@ -52,36 +55,14 @@ class temp(object):
     IMDB_CAP = {}
     VERIFICATIONS = {}
 
-async def is_req_subscribed(bot, query, chnl):
-    if await db.find_join_req(query.from_user.id, chnl):
-        return True
-    try:
-        user = await bot.get_chat_member(chnl, query.from_user.id)
-        if user.status != enums.ChatMemberStatus.BANNED:
-            return True
-    except UserNotParticipant:
-        pass
-    except Exception as e:
-        LOGGER.error(e)
-    return False
-
-async def is_subscribed(bot, user_id, channel_id):
-    try:
-        user = await bot.get_chat_member(channel_id, user_id)
-    except UserNotParticipant:
-        pass
-    except Exception as e:
-        pass
-    else:
-        if user.status != enums.ChatMemberStatus.BANNED:
-            return True
-    return False
     
 async def is_check_admin(bot, chat_id, user_id):
+    if user_id and user_id in ADMINS:
+        return True
     try:
         member = await bot.get_chat_member(chat_id, user_id)
         return member.status in [enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER]
-    except:
+    except Exception:
         return False
     
 async def users_broadcast(user_id, message, is_pin):
@@ -92,7 +73,7 @@ async def users_broadcast(user_id, message, is_pin):
         return True, "Success"
     except FloodWait as e:
         await asyncio.sleep(e.x)
-        return await users_broadcast(user_id, message)
+        return await users_broadcast(user_id, message, is_pin)
     except InputUserDeactivated:
         await db.delete_user(int(user_id))
         LOGGER.info(f"{user_id}-Removed from Database, since deleted account.")
@@ -114,12 +95,12 @@ async def groups_broadcast(chat_id, message, is_pin):
         if is_pin:
             try:
                 await m.pin()
-            except:
+            except Exception:
                 pass
         return "Success"
     except FloodWait as e:
         await asyncio.sleep(e.x)
-        return await groups_broadcast(chat_id, message)
+        return await groups_broadcast(chat_id, message, is_pin)
     except Exception as e:
         await db.delete_chat(chat_id)
         return "Error"
@@ -160,6 +141,13 @@ async def clear_junk(user_id, message):
     except Exception as e:
         return False, "Error"
     
+async def delete_after_delay(message, delay):
+    await asyncio.sleep(delay)
+    try:
+        await message.delete()
+    except Exception:
+        pass
+
 async def get_status(bot_id):
     try:
         return await db.movie_update_status(bot_id) or False  
@@ -167,97 +155,193 @@ async def get_status(bot_id):
         LOGGER.error(f"Error in get_movie_update_status: {e}")
         return False  
 
+def listx_to_str(k):
+    if k is None or k == "":
+        return "N/A"
+    
+    # Handle non-iterable types first
+    if not hasattr(k, '__iter__') or isinstance(k, (str, int, float)):
+        return str(k)
+    
+    result = []
+    for elem in k:
+        if elem and str(elem).strip():
+            result.append(str(elem).strip())
+    
+    if MAX_LIST_ELM and len(result) > MAX_LIST_ELM:
+        result = result[:int(MAX_LIST_ELM)]
+    
+    return ', '.join(result) if result else "N/A"
+    
 async def get_poster(query, bulk=False, id=False, file=None):
     if not id:
         query = (query.strip()).lower()
         title = query
-        year = re.findall(r'[1-2]\d{3}$', query, re.IGNORECASE)
-        if year:
-            year = list_to_str(year[:1])
-            title = (query.replace(year, "")).strip()
+        year_val = None
+        
+        year_list = re.findall(r'[1-2]\d{3}$', query, re.IGNORECASE)
+        if year_list:
+            year_val = year_list[0]
+            title = (query.replace(year_val, "")).strip()
         elif file is not None:
-            year = re.findall(r'[1-2]\d{3}', file, re.IGNORECASE)
-            if year:
-                year = list_to_str(year[:1]) 
-        else:
-            year = None
-        movieid = imdb.search_movie(title.lower(), results=10)
-        if not movieid:
+            year_list = re.findall(r'[1-2]\d{3}', file, re.IGNORECASE)
+            if year_list:
+                year_val = year_list[0]
+        
+        search_result = await asyncio.to_thread(imdb.search_movie, title.lower())
+        if not search_result or not search_result.titles:
             return None
-        if year:
-            filtered=list(filter(lambda k: str(k.get('year')) == str(year), movieid))
+        
+        movie_list = search_result.titles[:MAX_LIST_ELM]
+        
+        if year_val:
+            filtered = [m for m in movie_list if m.year and str(m.year) == str(year_val)]
             if not filtered:
-                filtered = movieid
+                filtered = movie_list
         else:
-            filtered = movieid
-        movieid=list(filter(lambda k: k.get('kind') in ['movie', 'tv series'], filtered))
-        if not movieid:
-            movieid = filtered
+            filtered = movie_list
+            
+        kind_filter = ['movie', 'tv series', 'tvSeries', 'tvMiniSeries', 'tvMovie']
+        filtered_kind = [m for m in filtered if m.kind and m.kind in kind_filter]
+        
+        if not filtered_kind:
+            filtered_kind = filtered
+        
         if bulk:
-            return movieid
-        movieid = movieid[0].movieID
+            return filtered_kind[:MAX_LIST_ELM]
+            
+        if not filtered_kind:
+            return None
+            
+        movie_brief = filtered_kind[0]
+        movieid_str = movie_brief.imdb_id 
     else:
-        movieid = query
-    movie = imdb.get_movie(movieid)
-    if movie.get("original air date"):
-        date = movie["original air date"]
-    elif movie.get("year"):
-        date = movie.get("year")
+        movieid_str = query
+
+    movie = await asyncio.to_thread(imdb.get_movie, movieid_str)
+    if not movie:
+        return None
+
+    if movie.release_date:
+        date = movie.release_date
+    elif movie.year:
+        date = str(movie.year)
     else:
         date = "N/A"
-    plot = ""
-    if not LONG_IMDB_DESCRIPTION:
-        plot = movie.get('plot')
-        if plot and len(plot) > 0:
-            plot = plot[0]
-    else:
-        plot = movie.get('plot outline')
-    if plot and len(plot) > 800:
-        plot = plot[0:800] + "..."
-
-    return {
-        'title': movie.get('title'),
-        'votes': movie.get('votes'),
-        "aka": list_to_str(movie.get("akas")),
-        "seasons": movie.get("number of seasons"),
-        "box_office": movie.get('box office'),
-        'localized_title': movie.get('localized title'),
-        'kind': movie.get("kind"),
-        "imdb_id": f"tt{movie.get('imdbID')}",
-        "cast": list_to_str(movie.get("cast")),
-        "runtime": list_to_str(movie.get("runtimes")),
-        "countries": list_to_str(movie.get("countries")),
-        "certificates": list_to_str(movie.get("certificates")),
-        "languages": list_to_str(movie.get("languages")),
-        "director": list_to_str(movie.get("director")),
-        "writer":list_to_str(movie.get("writer")),
-        "producer":list_to_str(movie.get("producer")),
-        "composer":list_to_str(movie.get("composer")) ,
-        "cinematographer":list_to_str(movie.get("cinematographer")),
-        "music_team": list_to_str(movie.get("music department")),
-        "distributors": list_to_str(movie.get("distributors")),
-        'release_date': date,
-        'year': movie.get('year'),
-        'genres': list_to_str(movie.get("genres")),
-        'poster': movie.get('full-size cover url'),
-        'plot': plot,
-        'rating': str(movie.get("rating")),
-        'url':f'https://www.imdb.com/title/tt{movieid}'
-    }
+        
+    plot = movie.plot[0] if isinstance(movie.plot, list) else movie.plot or ""
+    if len(plot) > 800:
+        plot = plot[:800] + "..."
+    imdb_id = movie.imdb_id
     
-async def search_gagala(text):
-    usr_agent = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-        'Chrome/61.0.3163.100 Safari/537.36'
-        }
-    text = text.replace(" ", '+')
-    url = f'https://www.google.com/search?q={text}'
-    response = requests.get(url, headers=usr_agent)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.text, 'html.parser')
-    titles = soup.find_all( 'h3' )
-    return [title.getText() for title in titles]
+    if not imdb_id.startswith("tt"):
+        imdb_id = f"tt{imdb_id}"
+        
+    return {
+        'title': movie.title,
+        'votes': movie.votes,
+        "aka": listx_to_str(movie.title_akas),
+        "seasons": (
+            len(movie.info_series.display_seasons)
+            if getattr(movie, "info_series", None)
+            and getattr(movie.info_series, "display_seasons", None)
+            else "N/A"
+        ),
+        "box_office": movie.worldwide_gross,
+        'localized_title': movie.title_localized,
+        'kind': movie.kind,
+        "imdb_id": imdb_id,
+        "cast": listx_to_str(movie.stars),
+        "runtime": listx_to_str(movie.duration),
+        "countries": listx_to_str(movie.countries),
+        "certificates": listx_to_str(movie.certificates),
+        "languages": listx_to_str(movie.languages),
+        "director": listx_to_str(movie.directors),
+        "writer": listx_to_str([p.name for p in movie.writers]),
+        "producer": listx_to_str([p.name for p in movie.producers]),
+        "composer": listx_to_str([p.name for p in movie.composers]),
+        "cinematographer": listx_to_str([p.name for p in movie.cinematographers]),
+        "music_team": listx_to_str([p.name for p in movie.music_team]),
+        "distributors": listx_to_str([c.name for c in movie.distributors]),        
+        'release_date': date,
+        'year': movie.year,
+        'genres': listx_to_str(movie.genres),
+        'poster': movie.cover_url,
+        'plot': plot,
+        'rating': str(movie.rating),
+        "url": movie.url or f"https://www.imdb.com/title/{imdb_id}"
+    }
 
+async def fetch_tmdb_data(title: str, year: str = None) -> Optional[Dict[str, Any]]:
+    base_url = "https://image.silentxbotz.tech/api/v2/poster"
+    params = {"title": title.strip()}
+    if year:
+        params["year"] = year
+        
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(base_url, params=params, timeout=aiohttp.ClientTimeout(total=25)) as response:
+                if response.status != 200:
+                    return None
+                data = await response.json()
+
+                raw_director = data.get("director")
+                if isinstance(raw_director, list):
+                    director = ", ".join([str(x) for x in raw_director if x])
+                elif isinstance(raw_director, str):
+                    director = raw_director
+                else:
+                    director = None
+
+                director = director if director else ""    
+                
+                return {
+                    "id": data.get("id"),
+                    "title": data.get("title", title),
+                    "original_title": data.get("original_title", ""),
+                    "original_language": data.get("original_language", "en"),
+                    "kind": data.get("type", "Movie").upper(),
+                    "director": director,
+                    "release_date": data.get("release_date", ""),
+                    "vote_average": f"{data['vote_average']:.1f}" if data.get("vote_average") else "N/A",
+                    "vote_count": f"{data['vote_count']:,}" if data.get("vote_count") else "0",
+                    "genres": data.get("genres", []),
+                    "imdb_id": data.get("imdb_id", ""),
+                    "imdb_url": f"https://www.imdb.com/title/{data.get('imdb_id')}/" if data.get("imdb_id") else "",
+                    "overview": data.get("overview", ""),
+                    "poster_url": data.get("poster_url", ""),
+                    "backdrop_url": data.get("backdrop_url", ""),
+                    "backdrops": data.get("backdrops", {}),
+                    "posters": data.get("posters", {}),
+                    "cast": data.get("cast", [])[:5],
+                    "videos": data.get("videos", []),
+                }
+                
+    except Exception as e:
+        LOGGER.error(f"API Fetch Error: {str(e)}")
+        return None
+
+async def get_best_visual(tmdb_data: Dict) -> Optional[str]:
+    backdrops = tmdb_data.get("backdrops", {})
+    by_language = backdrops.get("by_language", {})    
+    original_lang = tmdb_data.get("original_language")
+    if original_lang and by_language.get(original_lang):
+        return by_language[original_lang][0]["url"]    
+    indian_langs = [
+        "hi", "ta", "te", "kn", "ml", "mr", "bn", "gu", "pa", "or", "as", 
+        "ur", "ne"
+    ]
+    for lang in indian_langs:
+        if by_language.get(lang):
+            return by_language[lang][0]["url"]    
+    if by_language.get("en"):
+        return by_language["en"][0]["url"]
+    if by_language.get("unknown"):
+        return by_language["unknown"][0]["url"]    
+    if backdrops.get("all") and backdrops["all"]:
+        return backdrops["all"][0]["url"]
+    return None
+    
 async def get_shortlink(link, grp_id, is_second_shortener=False, is_third_shortener=False):
     settings = await get_settings(grp_id)
     if is_third_shortener:             
@@ -276,16 +360,29 @@ async def get_shortlink(link, grp_id, is_second_shortener=False, is_third_shorte
 
 async def get_settings(group_id):
     settings = temp.SETTINGS.get(group_id)
-    if not settings:
-        settings = await db.get_settings(group_id)
-        temp.SETTINGS.update({group_id: settings})
+    expiry = temp.SETTINGS_EXPIRY.get(group_id, 0)
+    current_time = time_module.time()
+
+    # Cache settings for 5 minutes (300 seconds)
+    if settings and current_time < expiry:
+        return settings
+
+    settings = await db.get_settings(group_id)
+    temp.SETTINGS[group_id] = settings
+    temp.SETTINGS_EXPIRY[group_id] = current_time + 300
     return settings
     
 async def save_group_settings(group_id, key, value):
     current = await get_settings(group_id)
     current.update({key: value})
-    temp.SETTINGS.update({group_id: current})
+    temp.SETTINGS[group_id] = current
+    temp.SETTINGS_EXPIRY[group_id] = time_module.time() + 300
     await db.update_settings(group_id, current)
+
+async def delete_group_setting(group_id, key):
+    await db.delete_setting(group_id, key)
+    if group_id in temp.SETTINGS:
+        temp.SETTINGS.pop(group_id, None)
     
 def get_size(size):
     units = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"]
@@ -333,24 +430,41 @@ def extract_request_content(message_text):
         return match.group(1).strip()
     return message_text.strip()
 
-def clean_filename(file_name):
-    prohibitedWords = BAD_WORDS
-    _regex = re.compile('|'.join(map(re.escape, prohibitedWords)))
-    file_name = _regex.sub("", file_name)
-
-    file_name = re.sub(r'[_\-\.\+]', ' ', file_name)
-    file_name = re.sub(r'http\S+|@\w+|#\w+|\[\w+\]|www\.\S+', '', file_name)
-    file_name = re.sub(r'[^\x00-\x7F]+', '', file_name)
-    file_name = re.sub(r'[()\{\}\[\]:;\'\!\?\"]', '', file_name)
-
-    return file_name
+def clean_filename(filename):
+    if not filename:
+        return ""
+    parts = filename.rsplit('.', 1)
+    if len(parts) == 2 and len(parts[1]) <= 5:
+        name, ext = parts
+    else:
+        name, ext = filename, ""
+    original_name = name
+    name = re.sub(r'[_\-\.\+]', ' ', name)  
+    if BAD_WORDS_REGEX:
+        name = BAD_WORDS_REGEX.sub('', name)
+    name = re.sub(r'@\w+\s*', '', name, flags=re.IGNORECASE)
+    name = re.sub(r'#\w+\s*', '', name, flags=re.IGNORECASE)
+    name = re.sub(r'www\.\S+\s*', '', name, flags=re.IGNORECASE)
+    name = re.sub(r'https?://\S+\s*', '', name, flags=re.IGNORECASE)
+    name = re.sub(r'\[\s*', ' ', name, flags=re.IGNORECASE)
+    name = re.sub(r'\s*\]', ' ', name, flags=re.IGNORECASE)
+    name = re.sub(r'\(\s*', ' ', name, flags=re.IGNORECASE)
+    name = re.sub(r'\s*\)', ' ', name, flags=re.IGNORECASE)
+    name = re.sub(r'[^\w\s]', ' ', name)
+    name = re.sub(r'\s+', ' ', name).strip()
+    if not name or not any(c.isalnum() for c in name):
+        words = re.findall(r'[A-Za-z0-9]+', original_name)
+        name = ' '.join(words) if words else "untitled"
+    name = ' '.join(w.capitalize() for w in name.split())  
+    final_result = f"{name}{ext}" if ext else name   
+    return final_result
 
 async def replace_words(string):
-    ignorewords = IGNORE_WORDS
+    ignorewords = sorted(IGNORE_WORDS, key=len, reverse=True)
     pattern = r'\b(?:{})\b'.format('|'.join(map(re.escape, ignorewords)))
-    formatted = re.sub(pattern, '', string)
+    formatted = re.sub(pattern, '', string, flags=re.IGNORECASE)
     return formatted.replace("-", " ")
-
+    
 def split_list(l, n):
     for i in range(0, len(l), n):
         yield l[i:i + n]  
@@ -411,6 +525,16 @@ def list_to_str(k):
         return ' '.join(f'{elem}, ' for elem in k)
     else:
         return ' '.join(f'{elem}, ' for elem in k)
+
+def clean_search_query(query):
+    pattern = r'\(s0\?(\d+)\|season\\s\*(\d+)\)\(\?:e\\d\+\)\?'
+    def replacer(match):
+        num = match.group(1) or match.group(2)
+        return f"Season {num}"
+    cleaned = re.sub(pattern, replacer, query, flags=re.IGNORECASE)
+    pattern2 = r's0\?(\d+)\(\?:e\\d\+\)\?'
+    cleaned = re.sub(pattern2, lambda m: f"Season {m.group(1)}", cleaned, flags=re.IGNORECASE)
+    return cleaned
 
 def last_online(from_user):
     time = ""
@@ -498,7 +622,7 @@ def gfilterparser(text, keyword):
 
     try:
         return note_data, buttons, alerts
-    except:
+    except Exception:
         return note_data, buttons, None
 
 def parser(text, keyword):
@@ -550,7 +674,7 @@ def parser(text, keyword):
 
     try:
         return note_data, buttons, alerts
-    except:
+    except Exception:
         return note_data, buttons, None
 
 def remove_escapes(text: str) -> str:
@@ -635,18 +759,19 @@ async def get_seconds(time_string):
         return 0
     
 async def get_cap(settings, remaining_seconds, files, query, total_results, search, offset):
+    search = clean_search_query(search)
     if settings["imdb"]:
         IMDB_CAP = temp.IMDB_CAP.get(query.from_user.id)
         if IMDB_CAP:
             cap = IMDB_CAP
             for file_num, file in enumerate(files, start=offset+1):
-                cap += f"\n\n<b>{file_num}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'>{get_size(file.file_size)}| {clean_filename(file.file_name)}</a></b>"
+                cap += f"\n\n<b>{file_num}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'>{get_size(file.file_size)} | {clean_filename(file.file_name)}</a></b>"
         else:
             imdb = await get_poster(search, file=(files[0]).file_name) if settings["imdb"] else None
             if imdb:
                 TEMPLATE = script.IMDB_TEMPLATE_TXT
                 cap = TEMPLATE.format(
-                    qurey=search,
+                    query=search,
                     title=imdb['title'],
                     votes=imdb['votes'],
                     aka=imdb["aka"],
@@ -677,43 +802,13 @@ async def get_cap(settings, remaining_seconds, files, query, total_results, sear
                     **locals()
                 )
                 for file_num, file in enumerate(files, start=offset+1):
-                    cap += f"\n\n<b>{file_num}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'>{get_size(file.file_size)}| {clean_filename(file.file_name)}</a></b>"
+                    cap += f"\n\n<b>{file_num}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'>{get_size(file.file_size)} | {clean_filename(file.file_name)}</a></b>"
             else:
                 cap =f"<b>📂 ʜᴇʀᴇ ɪ ꜰᴏᴜɴᴅ ꜰᴏʀ ʏᴏᴜʀ sᴇᴀʀᴄʜ <code>{search}</code></b>\n\n"
                 for file_num, file in enumerate(files, start=offset+1):
-                    cap += f"<b>{file_num}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'>{get_size(file.file_size)}| {clean_filename(file.file_name)}\n\n</a></b>"
+                    cap += f"<b>{file_num}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'>{get_size(file.file_size)} | {clean_filename(file.file_name)}\n\n</a></b>"
     else:
         cap =f"<b>📂 ʜᴇʀᴇ ɪ ꜰᴏᴜɴᴅ ꜰᴏʀ ʏᴏᴜʀ sᴇᴀʀᴄʜ <code>{search}</code></b>\n\n"
         for file_num, file in enumerate(files, start=offset+1):
-            cap += f"<b>{file_num}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'>{get_size(file.file_size)}| {clean_filename(file.file_name)}\n\n</a></b>"
+            cap += f"<b>{file_num}. <a href='https://telegram.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'>{get_size(file.file_size)} | {clean_filename(file.file_name)}\n\n</a></b>"
     return cap
-
-async def group_setting_buttons(grp_id):
-    settings = await get_settings(grp_id)
-    buttons = [[
-                InlineKeyboardButton('ʀᴇꜱᴜʟᴛ ᴘᴀɢᴇ', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
-                InlineKeyboardButton('ʙᴜᴛᴛᴏɴ' if settings.get("button") else 'ᴛᴇxᴛ', callback_data=f'setgs#button#{settings.get("button")}#{grp_id}',),
-            ],[
-                InlineKeyboardButton('ꜰɪʟᴇ ꜱᴇᴄᴜʀᴇ', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',),
-                InlineKeyboardButton('ᴇɴᴀʙʟᴇ' if settings["file_secure"] else 'ᴅɪꜱᴀʙʟᴇ', callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',),
-            ],[
-                InlineKeyboardButton('ɪᴍᴅʙ ᴘᴏꜱᴛᴇʀ', callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',),
-                InlineKeyboardButton('ᴇɴᴀʙʟᴇ' if settings["imdb"] else 'ᴅɪꜱᴀʙʟᴇ', callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',),
-            ],[
-                InlineKeyboardButton('ᴡᴇʟᴄᴏᴍᴇ ᴍꜱɢ', callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',),
-                InlineKeyboardButton('ᴇɴᴀʙʟᴇ' if settings["welcome"] else 'ᴅɪꜱᴀʙʟᴇ', callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',),
-            ],[
-                InlineKeyboardButton('ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{grp_id}',),
-                InlineKeyboardButton('ᴇɴᴀʙʟᴇ' if settings["auto_delete"] else 'ᴅɪꜱᴀʙʟᴇ', callback_data=f'setgs#auto_delete#{settings["auto_delete"]}#{grp_id}',),
-            ],[
-                InlineKeyboardButton('ᴍᴀx ʙᴜᴛᴛᴏɴꜱ', callback_data=f'setgs#max_btn#{settings["max_btn"]}#{grp_id}',),
-                InlineKeyboardButton('10' if settings["max_btn"] else f'{MAX_B_TN}', callback_data=f'setgs#max_btn#{settings["max_btn"]}#{grp_id}',),
-            ],[
-                InlineKeyboardButton('ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ᴍᴏᴅᴇ', callback_data=f'verification_setgs#{grp_id}',),
-            ],[
-                InlineKeyboardButton('ʟᴏɢ ᴄʜᴀɴɴᴇʟ', callback_data=f'log_setgs#{grp_id}',),
-                InlineKeyboardButton('ꜱᴇᴛ ᴄᴀᴘᴛɪᴏɴ', callback_data=f'caption_setgs#{grp_id}',),   
-            ],[
-                InlineKeyboardButton('⇋ ᴄʟᴏꜱᴇ ꜱᴇᴛᴛɪɴɢꜱ ᴍᴇɴᴜ ⇋', callback_data='close_data')
-    ]]
-    return buttons
